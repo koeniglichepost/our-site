@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Königliche Post - Detailansicht</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
+    <style>
+        /* Deine bestehenden CSS-Variablen */
+        :root {
+            --parchment: #f5e9c9;
+            --parchment-dark: #e2d3a9;
+            --ink: #2c2416;
+            --ink-light: #4a3f2d;
+            --red-seal: #8b0000;
+            --gold: #c9a227;
+            --border-style: 1px solid rgba(139, 69, 19, 0.3);
+            --decorative-border: 4px double var(--gold); /* Neu für Blog-Elemente */
+        }
+        /* Deine bestehenden globalen Styles (body, *, .newspaper, header, nav) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Old Standard TT', serif;
+            background-color: #d4c19c;
+            color: var(--ink);
+            background-image: radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.3) 0px, transparent 50%),
+                               radial-gradient(circle at 90% 80%, rgba(160, 130, 90, 0.2) 0px, transparent 50%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .newspaper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--parchment);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grain)"/></svg>');
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 40px rgba(139, 69, 19, 0.1) inset;
+            border: 12px double #8B4513;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            animation: float 8s ease-in-out infinite;
+        }
+        .newspaper::before, .newspaper::after { content: ""; position: absolute; z-index: 0; pointer-events: none; }
+        .newspaper::before { top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle at 70% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 40%); }
+        .newspaper::after { bottom: 30px; left: 20px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(160, 82, 45, 0.1) 0%, transparent 70%); }
+        header { text-align: center; padding: 30px 20px 20px; border-bottom: var(--border-style); position: relative; background: linear-gradient(to bottom, var(--parchment) 60%, var(--parchment-dark)); }
+        .header-content { position: relative; z-index: 2; }
+        .crest { width: 120px; height: 120px; margin: 0 auto 15px; background: var(--red-seal); border: 8px double var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); animation: pulse 4s infinite ease-in-out; }
+        .crest::before { content: "✠"; font-size: 60px; color: var(--gold); }
+        .crest::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(201, 162, 39, 0.5); }
+        h1 { font-family: 'Cinzel', serif; font-size: 3.2rem; text-transform: uppercase; letter-spacing: 3px; margin: 10px 0; color: var(--ink); text-shadow: 2px 2px 4px rgba(44, 36, 22, 0.2); position: relative; }
+        h1::after { content: ""; display: block; width: 200px; height: 3px; background: linear-gradient(90deg, transparent, var(--red-seal), transparent); margin: 10px auto; }
+        .subtitle { font-family: 'MedievalSharp', cursive; font-size: 1.2rem; color: var(--ink-light); margin-bottom: 10px; }
+        .date { font-style: italic; margin-top: 5px; font-size: 0.9rem; }
+        nav { margin: 20px 0; padding: 15px; border-top: var(--border-style); border-bottom: var(--border-style); background: linear-gradient(to right, transparent, var(--parchment-dark), transparent); }
+        .nav-links { display: flex; justify-content: center; list-style: none; flex-wrap: wrap; gap: 15px 30px; }
+        .nav-links a { font-family: 'MedievalSharp', cursive; text-decoration: none; color: var(--ink); font-size: 1.1rem; position: relative; padding: 5px 0; transition: all 0.3s ease; }
+        .nav-links a:hover { color: var(--red-seal); }
+        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--red-seal); transition: width 0.3s ease; }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* NEUE SEKTION: Blog-Beitrag (Single View) */
+        .blog-post {
+            padding: 40px;
+            max-width: 900px; /* Etwas breiter als Hero */
+            margin: 0 auto;
+            position: relative;
+            background: var(--parchment); /* Wichtig für eigene Box-Shadow */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1), inset 0 0 25px rgba(139, 69, 19, 0.05);
+            border-left: var(--decorative-border); /* Neue goldene Seitenlinie */
+            border-right: var(--decorative-border);
+            margin-bottom: 30px; /* Abstand zum Footer */
+        }
+
+        .blog-post-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed var(--ink-light);
+        }
+
+        .blog-post-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: var(--red-seal);
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(44, 36, 22, 0.3);
+        }
+
+        .blog-post-meta {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 0.95rem;
+            color: var(--ink-light);
+            font-style: italic;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+        }
+        .blog-post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .blog-post-meta span::before {
+            content: "•";
+            color: var(--gold);
+        }
+        .blog-post-meta span:first-child::before {
+            content: ""; /* Kein Punkt am Anfang */
+        }
+
+        .blog-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Zwei Spalten für Text */
+            gap: 40px; /* Größerer Abstand zwischen Spalten */
+        }
+
+        .blog-text {
+            font-size: 1.1rem;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .blog-text p {
+            margin-bottom: 18px; /* Etwas mehr Zeilenabstand */
+        }
+
+        /* Initial für den ersten Buchstaben */
+        .blog-text p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 4.5rem; /* Noch größer */
+            float: left;
+            line-height: 0.8;
+            padding-right: 10px;
+            color: var(--red-seal);
+            text-shadow: 1px 1px 1px rgba(44, 36, 22, 0.3);
+            margin-bottom: -5px; /* Korrektur für Zeilenumbruch */
+        }
+
+        .blog-illustration {
+            margin-bottom: 30px; /* Abstand, wenn es zwischen Text ist */
+            text-align: center; /* Zentriert die Illustration */
+        }
+        .blog-illustration img {
+            max-width: 100%;
+            border: 6px double var(--ink-light);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            filter: sepia(0.4) contrast(1.1) brightness(0.95);
+            transition: all 0.5s ease;
+        }
+        .blog-illustration img:hover {
+            transform: scale(1.02);
+            filter: sepia(0.3) contrast(1.2) brightness(1);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .blog-illustration figcaption {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            font-style: italic;
+            margin-top: 10px;
+            text-align: center;
+        }
+        /* Oder wenn die Illu alleine ist */
+        .blog-illustration.full-width {
+            grid-column: 1 / -1; /* Nimmt beide Spalten ein */
+            margin-bottom: 40px;
+        }
+
+        /* Blockzitate für mehr Abwechslung */
+        blockquote {
+            font-family: 'Cinzel', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--ink-light);
+            border-left: 5px solid var(--red-seal);
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: rgba(201, 162, 39, 0.05);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            line-height: 1.4;
+            position: relative;
+        }
+        blockquote::before {
+            content: "„";
+            font-family: serif;
+            font-size: 5rem;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+            color: rgba(139, 0, 0, 0.1);
+            z-index: 0;
+        }
+        blockquote p {
+            margin-bottom: 0; /* Keine doppelten Absätze */
+        }
+
+        /* Seitenleiste für Related Posts/Inhaltsverzeichnis */
+        .sidebar {
+            padding: 25px;
+            background: var(--parchment-dark);
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            margin-top: 30px; /* Abstand zum Hauptinhalt */
+        }
+        .sidebar h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.3rem;
+            color: var(--red-seal);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--ink-light);
+            text-align: center;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a {
+            font-family: 'Old Standard TT', serif;
+            color: var(--ink);
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar ul li a:hover {
+            color: var(--red-seal);
+            transform: translateX(5px);
+            text-decoration: underline;
+        }
+
+        /* Deine bestehenden more-articles, cta, footer, animations, responsive */
+        .more-articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+        .article-card {
+            padding: 25px;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            background: rgba(245, 233, 201, 0.5);
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            background: rgba(245, 233, 201, 0.7);
+        }
+        .article-card::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            pointer-events: none;
+        }
+        .article-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--ink);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--ink-light);
+        }
+        .article-card p {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        .read-more {
+            display: inline-block;
+            font-family: 'MedievalSharp', cursive;
+            color: var(--red-seal);
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            padding-right: 20px;
+        }
+        .read-more::after {
+            content: "➜";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .read-more:hover::after {
+            transform: translate(5px, -50%);
+        }
+        .cta {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--parchment) 40%, var(--parchment-dark));
+            border-top: var(--border-style);
+            position: relative;
+        }
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .cta h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        .cta p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .subscribe-btn {
+            display: inline-block;
+            background: var(--red-seal);
+            color: var(--parchment);
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 12px 35px;
+            border: 3px double var(--gold);
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .subscribe-btn:hover {
+            background: #6d0000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .subscribe-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            width: 20px;
+            height: 150%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+        }
+        .subscribe-btn:hover::before {
+            left: 110%;
+        }
+        footer {
+            padding: 30px 40px;
+            background: var(--ink);
+            color: var(--parchment);
+            text-align: center;
+            position: relative;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .footer-section {
+            text-align: left;
+            max-width: 250px;
+        }
+        .footer-section h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: var(--parchment);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+        .copyright {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(201, 162, 39, 0.3);
+            font-size: 0.9rem;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); } 50% { transform: scale(1.03); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) {
+            .article-content, .blog-content {
+                grid-template-columns: 1fr;
+            }
+            .illustration, .blog-illustration {
+                margin-top: 20px;
+            }
+            .more-articles {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+        @media print {
+            body { background: none; padding: 0; }
+            .newspaper { box-shadow: none; border: none; max-width: 100%; }
+            .nav-links, .subscribe-btn, footer { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <header>
+            <div class="header-content">
+                <div class="crest"></div>
+                <h1>Die Königliche Post</h1>
+                <div class="subtitle">Amtliches Nachrichtenblatt des Reiches</div>
+                <div class="date">Anno Domini 1457, den 29. Tag des Monats Juli</div>
+            </div>
+        </header>
+         <nav>
+           <ul class="nav-links">
+                <li><a href="index.html">Aktuelles</a></li>
+                <li><a href="burg.html">Höfe & Adel</a></li>
+                <li><a href="steuern.html">Handel & Wirtschaft</a></li>
+                <li><a href="ketzerei.html">Kirchen & Glaube</a></li> 
+                <li><a href="kultur.html">Kultur & Gelehrsamkeit</a></li>
+
+            </ul>
+        </nav>
+
+        <main class="blog-post">
+            <div class="blog-post-header">
+                <h2>Ein neues Kapitel für Die Siedler Online: Hoffnung am Horizont?</h2>
+                <div class="blog-post-meta">
+                    <span>Verfasst von: Ein aufmerksamer Chronist</span>
+                    <span>Veröffentlicht am: 29. April 2025</span>
+                    <span>Kategorie: Kultur & Gelehrsamkeit</span>
+                </div>
+            </div>
+
+            <div class="blog-content">
+                <div class="blog-text">
+                    <p>
+                        In den Annalen der digitalen Reiche ereignete sich jüngst ein bedeutender Wandel: Die Geschicke der geliebten Siedlung "Die Siedler Online", einst behütet von Blue Byte und Ubisoft, wurden nun teilweise in die Hände von CipSoft übergeben. Eine Nachricht, die bei den unermüdlichen "Wuslern" des Reiches, jenen treuen Bürgern, die ihre Inseln mit Hingabe aufbauen, gleichermaßen Hoffnung und Fragen aufwirft. Diese Übergabe wird von vielen als eine Chance betrachtet, die langen Schatten der Vergangenheit zu vertreiben und ein neues Zeitalter des Wohlstands und der Zufriedenheit einzuläuten.
+                    </p>
+                    <p>
+                        Über die Jahre hinweg haben sich auf den digitalen Inseln der Siedlergemeinschaft einige Bürden angesammelt, die das frohe Schaffen bisweilen trübten. Da waren zunächst die **technischen Altlasten**, die sich wie zäher Nebel über die Landschaften legten: lange Ladezeiten, die die Geduld der eifrigsten Baumeister auf die Probe stellten, und bisweilen unvermittelte Verbindungsabbrüche, die den Fortschritt hemmten. Manch einer berichtete auch von einer Benutzeroberfläche, die mit der Zeit an Übersichtlichkeit einbüßte, was insbesondere neuen Siedlern den Start erschwerte.
+                    </p>
+                </div>
+                <div class="blog-text">
+                    <p>
+                        Des Weiteren wurde in den Marktplätzen und Tavernen der Ruf nach **wirtschaftlicher Gerechtigkeit** lauter. Das Gefühl, dass der Fortschritt im Spiel maßgeblich von der Fähigkeit abhängt, große Mengen an Gold oder kostbaren Juwelen (gemeint sind wohl digitale Währungen) zu investieren, schuf bei vielen treuen, aber weniger begüterten Wuslern ein **Gefühl der Ohnmacht**. Sie wünschten sich, dass auch ohne stetige Investitionen aus dem königlichen Schatz ein sinnvolles und fesselndes Spielerlebnis möglich sei.
+                    </p>
+                    <p>
+                        Auch die **Vielfalt der Abenteuer** schien in den letzten Zyklen zuweilen zu stagnieren. Während alte Feste und Ereignisse in leicht verändertem Gewand zurückkehrten, sehnten sich viele nach wahrhaft neuen Herausforderungen und innovativen Spielmechaniken, die frischen Wind in die altehrwürdigen Siedlungen bringen. Die Kommunikation zwischen den Verwaltern des Spiels und der Gemeinschaft war zudem oft Gegenstand angeregter Debatten; der Wunsch nach mehr Transparenz und einem offeneren Ohr für die Anliegen der Siedler war stets präsent.
+                    </p>
+                </div>
+            </div>
+
+            <div class="blog-illustration full-width">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%23f5e9c9'/><rect x='50' y='50' width='700' height='350' fill='%23d4c19c' stroke='%234a3f2d' stroke-width='3'/><path d='M100,150 L150,100 L200,150 L150,200 Z' fill='%238b0000'/><path d='M300,100 L350,150 L300,200 L250,150 Z' fill='%238b4513'/><path d='M500,50 L550,100 L500,150 L450,100 Z' fill='%232c2416'/><circle cx='650' cy='120' r='30' fill='%23c9a227'/><path d='M620,130 L680,130 L650,180 Z' fill='%23c9a227'/><text x='400' y='225' font-family='Cinzel' font-size='50' fill='%232c2416' text-anchor='middle'>Neuer Wind</text><text x='400' y='280' font-family='MedievalSharp' font-size='30' fill='%234a3f2d' text-anchor='middle'>für die Siedler</text><rect x='50' y='250' width='700' height='150' fill='%23e2d3a9' opacity='0.7'/><text x='400' y='320' font-family='Old Standard TT' font-size='25' fill='%232c2416' text-anchor='middle'>Alte Lasten, neue Hoffnungen</text><path d='M70,360 Q200,320 400,360 Q600,400 730,360' fill='none' stroke='%238b0000' stroke-width='4' stroke-dasharray='10,5'/></svg>" alt="Illustration des Wechsels der Verwaltung von Die Siedler Online, mit neuen Hoffnungen und alten Problemen symbolisiert.">
+                <figcaption>Illustratio Nova: Die Waage des Wandels – alte Lasten (links), neue Chancen (rechts)</figcaption>
+            </div>
+
+            <div class="blog-text">
+                <p>
+                    Mit CipSoft am Ruder, wenn auch unter der wachsamen Feder von Ubisoft, hegen die Wusler die aufrichtige Hoffnung, dass ein **frischer Wind** durch die alten Wälder und über die vertrauten Inseln wehen möge. Man wünscht sich eine **Modernisierung der technischen Grundlagen**, die das Spiel stabiler und schneller macht, sowie eine **Renaissance der Spielinhalte**, die über das bloße Recyceln hinausgeht. Ein besonderes Augenmerk sollte dabei auf die **Zugänglichkeit für alle Spieler** gelegt werden, unabhängig von ihrem Vermögen, um das Gefühl der Ohnmacht zu überwinden und jedem Siedler eine faire Chance auf umfassenden Spielspaß zu ermöglichen.
+                </p>
+                <blockquote>
+                    <p>"Möge dieser Wandel nicht nur eine Verschiebung der Verantwortlichkeiten sein, sondern ein wahrhaftiges Versprechen auf eine blühendere Zukunft für alle Siedler."</p>
+                </blockquote>
+                <p>
+                    Die Königliche Post wird diesen Übergang mit wachsamen Augen verfolgen. Wir rufen die neuen Verwalter auf, die Rufe der Gemeinschaft zu erhören, ihre Sorgen ernst zu nehmen und mit Tatkraft und Weitsicht zu agieren. Nur so kann "Die Siedler Online" in eine neue Ära des digitalen Wohlstands und der Zufriedenheit eintreten, in der alle Wusler – ob mit prallem oder bescheidenem Beutel – ihren Platz finden und gedeihen können. Mögen die neuen Kapitel ruhmreicher sein als die vergangenen!
+                </p>
+            </div>
+            
+            <div class="sidebar">
+                <h4>Ähnliche Chroniken</h4>
+                <ul>
+                    <li><a href="#">Die Geschichte der Wusler: Von den Anfängen bis heute</a></li>
+                    <li><a href="#">Wirtschaftliche Aspekte in digitalen Reichen: Ein Vergleich</a></li>
+                    <li><a href="#">Community-Stimmen: Was die Siedler wirklich bewegt</a></li>
+                    <li><a href="#">Zukunftsausblick: Innovationen in Online-Welten</a></li>
+                </ul>
+            </div>
+
+        </main>
+<section class="cta">
+    <div class="cta-content">
+        <h2>Wir grüßen alle Reisenden!</h2>
+        <p>Schön, Euch auf unserem Blatte willkommen zu heißen! Schaut Euch um, lest die Neuigkeiten und schöpft Wissen. Solltet Ihr Fragen haben oder den Austausch mit Gleichgesinnten suchen, so seid Ihr herzlich eingeladen, unserem digitalen Hof beizutreten – unserer Königlichen Burg.</p>
+        <a href="burg.html" class="subscribe-btn">Betretet die Burg!</a>
+    </div>
+</section>
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Die Königliche Post</div>
+                <div class="footer-info">
+                    <div class="footer-section">
+                        <h4>Kontakt</h4>
+                        <p>Hofdruckerei des Königs<br>Berlin und Cölln<br>Bote fragen nach <br> Hubert</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="archiv.html">Archiv der Ausgaben</a></li>
+                            <li><a href="berichterstattung.html">Berichterstattung vorschlagen</a></li>
+                            <li><a href="impressum.html">Impressum & Datenschutz</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Über uns</h4>
+                        <ul class="footer-links">
+                            <li><a href="schreiber.html">Unsere Schreiber</a></li>
+                            <li><a href="chronik.html">Geschichte der Post</a></li>
+                            <li><a href="adel.html">Königliches Privileg</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    © Anno Domini 2025 - Die Königliche Post. Alle Rechte vorbehalten. Nachdruck nur mit Genehmigung der königlichen Druckerei.
+                    - Die Zeitung ist rein statisch (html/css)
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        // Einfache Animation beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('header, nav, .hero, .article-card, .cta, footer, .blog-post'); // .blog-post hinzugefügt
+
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.animation = 'fadeIn 0.8s ease-out forwards';
+                }, 150 * index);
+            });
+
+            // Zufälliges Knackgeräusch für Pergament-Effekt
+            const crackle = () => {
+                const crack = document.createElement('div');
+                crack.style.position = 'fixed';
+                crack.style.top = Math.random() * 100 + 'vh';
+                crack.style.left = Math.random() * 100 + 'vw';
+                crack.style.width = '40px';
+                crack.style.height = '2px';
+                crack.style.background = 'rgba(139, 69, 19, 0.3)';
+                crack.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+                crack.style.pointerEvents = 'none';
+                crack.style.zIndex = '1000';
+                crack.style.opacity = '0';
+                crack.style.transition = 'opacity 3s ease';
+                document.body.appendChild(crack);
+
+                setTimeout(() => {
+                    crack.style.opacity = '1';
+                }, 10);
+
+                setTimeout(() => {
+                    crack.style.opacity = '0';
+                }, 1000);
+
+                setTimeout(() => {
+                    document.body.removeChild(crack);
+                }, 4000);
+            };
+
+            // Starte den Effekt und wiederhole in zufälligen Abständen
+            setInterval(crackle, 3000 + Math.random() * 7000);
+            crackle();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Königliche Post - Amtliches Nachrichtenblatt des Reiches</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f5e9c9;
+            --parchment-dark: #e2d3a9;
+            --ink: #2c2416;
+            --ink-light: #4a3f2d;
+            --red-seal: #8b0000;
+            --gold: #c9a227;
+            --border-style: 1px solid rgba(139, 69, 19, 0.3);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Old Standard TT', serif;
+            background-color: #d4c19c;
+            color: var(--ink);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.3) 0px, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(160, 130, 90, 0.2) 0px, transparent 50%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        /* Zeitungs-Container mit Pergament-Hintergrund */
+        .newspaper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--parchment);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grain)"/></svg>');
+            box-shadow:
+                0 0 20px rgba(0, 0, 0, 0.2),
+                0 0 40px rgba(139, 69, 19, 0.1) inset;
+            border: 12px double #8B4513;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            animation: float 8s ease-in-out infinite;
+        }
+        /* Alterungseffekte */
+        .newspaper::before,
+        .newspaper::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .newspaper::before {
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle at 70% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 40%);
+        }
+        .newspaper::after {
+            bottom: 30px;
+            left: 20px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(160, 82, 45, 0.1) 0%, transparent 70%);
+        }
+        /* Header mit Wappen und Titel */
+       /* !important? HA! Braucht kein Mensch! */
+        header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            border-bottom: var(--border-style);
+            position: relative;
+            background: linear-gradient(to bottom, var(--parchment) 60%, var(--parchment-dark));
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        .crest {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            background: var(--red-seal);
+            border: 8px double var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: pulse 4s infinite ease-in-out;
+        }
+        .crest::before {
+            content: "✠";
+            font-size: 60px;
+            color: var(--gold);
+        }
+        .crest::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow:
+                inset 0 0 20px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(201, 162, 39, 0.5);
+        }
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 10px 0;
+            color: var(--ink);
+            text-shadow: 2px 2px 4px rgba(44, 36, 22, 0.2);
+            position: relative;
+        }
+        h1::after {
+            content: "";
+            display: block;
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--red-seal), transparent);
+            margin: 10px auto;
+        }
+        .subtitle {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            color: var(--ink-light);
+            margin-bottom: 10px;
+        }
+        .date {
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        /* Meister-Spruch als Branding-Element */
+        .master-saying {
+            position: absolute;
+            top: 15px; /* Adjust as needed */
+            right: 15px; /* Adjust as needed */
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px dashed rgba(139, 69, 19, 0.2);
+            padding: 8px 12px;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 0.85rem;
+            color: var(--ink-light);
+            text-align: right;
+            line-height: 1.4;
+            max-width: 250px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            z-index: 3; /* Ensure it's above other elements */
+            opacity: 0.9;
+            transform: rotate(2deg); /* A slight tilt for character */
+            pointer-events: none; /* Make it unclickable */
+        }
+        .master-saying u {
+            color: var(--red-seal);
+            text-decoration-color: var(--red-seal);
+        }
+        .master-saying code {
+            background-color: rgba(139, 69, 19, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Old Standard TT', serif; /* Use a more readable font for code */
+            font-size: 0.8em;
+            color: var(--red-seal);
+        }
+        /* Navigation */
+        nav {
+            margin: 20px 0;
+            padding: 15px;
+            border-top: var(--border-style);
+            border-bottom: var(--border-style);
+            background: linear-gradient(to right, transparent, var(--parchment-dark), transparent);
+        }
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+            gap: 15px 30px;
+        }
+        .nav-links a {
+            font-family: 'MedievalSharp', cursive;
+            text-decoration: none;
+            color: var(--ink);
+            font-size: 1.1rem;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: var(--red-seal);
+        }
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--red-seal);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        /* Hero-Bereich mit Hauptnachricht */
+        .hero {
+            padding: 30px 40px;
+            border-bottom: var(--border-style);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 80px;
+            height: 80px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,20 Q40,5 60,20 T100,20 Q85,40 100,60 T100,100 Q80,85 60,100 T20,100 Q5,80 20,60 T20,20" fill="none" stroke="rgba(139, 0, 0, 0.1)" stroke-width="2"/></svg>');
+            opacity: 0.2;
+        }
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .main-headline {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--red-seal);
+            border-bottom: 1px dashed var(--ink-light);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(44, 36, 22, 0.3);
+        }
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            margin-bottom: 10px;
+        }
+        .article-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start; /* Adjust alignment to prevent illustration stretching vertically too much */
+        }
+        .article-text {
+            font-size: 1.1rem;
+            text-align: justify;
+            hyphens: auto;
+        }
+        .article-text p {
+            margin-bottom: 15px;
+        }
+        .article-text p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            float: left;
+            line-height: 0.8;
+            padding-right: 8px;
+            color: var(--red-seal);
+            text-shadow: 1px 1px 1px rgba(44, 36, 22, 0.3);
+        }
+        .illustration {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .illustration img {
+            max-width: 100%;
+            height: auto; /* Ensure aspect ratio is maintained */
+            border: 6px double var(--ink-light);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            filter: sepia(0.4) contrast(1.1) brightness(0.95);
+            transition: all 0.5s ease;
+        }
+        .illustration img:hover {
+            transform: scale(1.02);
+            filter: sepia(0.3) contrast(1.2) brightness(1);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .illustration::before {
+            content: "„Illustratio Magnifica“";
+            position: absolute;
+            bottom: -20px;
+            right: 10px;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 0.8rem;
+            color: var(--ink-light);
+            font-style: italic;
+        }
+        /* Weitere Artikel */
+        .more-articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+        .article-card {
+            padding: 25px;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            background: rgba(245, 233, 201, 0.5);
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            background: rgba(245, 233, 201, 0.7);
+        }
+        .article-card::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            pointer-events: none;
+        }
+        .article-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--ink);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--ink-light);
+        }
+        .article-card p {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        .read-more {
+            display: inline-block;
+            font-family: 'MedievalSharp', cursive;
+            color: var(--red-seal);
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            padding-right: 20px;
+        }
+        .read-more::after {
+            content: "➜";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .read-more:hover::after {
+            transform: translate(5px, -50%);
+        }
+        /* Call to Action */
+        .cta {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--parchment) 40%, var(--parchment-dark));
+            border-top: var(--border-style);
+            position: relative;
+        }
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .cta h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        .cta p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .subscribe-btn {
+            display: inline-block;
+            background: var(--red-seal);
+            color: var(--parchment);
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 12px 35px;
+            border: 3px double var(--gold);
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .subscribe-btn:hover {
+            background: #6d0000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .subscribe-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            width: 20px;
+            height: 150%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+        }
+        .subscribe-btn:hover::before {
+            left: 110%;
+        }
+        /* Footer */
+        footer {
+            padding: 30px 40px;
+            background: var(--ink);
+            color: var(--parchment);
+            text-align: center;
+            position: relative;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .footer-section {
+            text-align: left;
+            max-width: 250px;
+        }
+        .footer-section h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: var(--parchment);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+        .copyright {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(201, 162, 39, 0.3);
+            font-size: 0.9rem;
+        }
+        /* Animationen */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .article-content {
+                grid-template-columns: 1fr;
+            }
+            .illustration {
+                margin-top: 20px;
+            }
+            .more-articles {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            .master-saying {
+                position: static; /* Positionierung auf Mobilgeräten anpassen */
+                margin: 15px auto;
+                transform: none;
+                text-align: center;
+                max-width: 90%; /* Anpassen, damit es nicht zu breit wird */
+            }
+        }
+        /* Druckoptimierung */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .newspaper {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+            }
+            .nav-links, .subscribe-btn, footer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <header>
+            <div class="header-content">
+                <div class="crest"></div>
+                <h1>Die Königliche Post</h1>
+                <div class="subtitle">Amtliches Nachrichtenblatt des Reiches</div>
+                <div class="date">Anno Domini 1457, den 29. Tag des Monats Juli</div>
+            </div>
+            <div class="master-saying">
+                "Erstens: Keine gotischen Verzögerungen.<br>
+                Zweitens: CSS-Gerüste <u>vor</u> dem ersten Regen.<br>
+                Drittens: <code>!important</code> HA! Braucht kein Mensch!!"
+            </div>
+        </header>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Aktuelles</a></li>
+                <li><a href="burg.html">Höfe & Adel</a></li>
+                <li><a href="steuern.html">Handel & Wirtschaft</a></li>
+                <li><a href="ketzerei.html">Kirchen & Glaube</a></li>
+                <li><a href="kultur.html">Kultur & Gelehrsamkeit</a></li>
+            </ul>
+        </nav>
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="main-headline">Entdeckt die Tiefen des Wissens in unserem Königs-Archiv!</h2>
+                <div class="article-meta">
+                    <span>Eine Botschaft des königlichen Archivars an die Leserschaft</span>
+                    <span>Veröffentlicht am: 30. Juli 2025</span>
+                </div>
+                <div class="article-content">
+                    <div class="article-text">
+                        <p>
+                            Die Königliche Post freut sich, die feierliche Eröffnung unserer neuen **Königs-Archive** bekannt zu geben! Nach langer und fleißiger Arbeit stehen Euch nun umfassende Sammlungen zu den wichtigsten Themen des Reiches zur Verfügung. Taucht ein in die Rubriken **Kirchen & Glaube**, **Handel & Wirtschaft** und **Kultur & Gelehrsamkeit**.
+                        </p>
+                        <p>
+                            Jedes Archiv ist ein Schatzkästlein voller Berichte, Analysen und fesselnder Geschichten, die darauf warten, von Euch entdeckt zu werden. Ob tiefgründige Kritiken, spannende Marktentwicklungen oder die feinsten Künste – hier findet Ihr alles, was Euren Geist bereichert und Euch auf dem Laufenden hält.
+                        </p>
+                        <a href="archiv.html" class="read-more">Stöbert durch die Archive!</a>
+                    </div>
+                    <div class="illustration">
+                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23d4c19c'/><path d='M50,250 L350,250 L380,200 L350,150 L300,130 L250,150 L200,130 L150,150 L100,130 L50,150 Z' fill='%23a67c52' stroke='%234a3f2d' stroke-width='2'/><path d='M200,130 L200,80' stroke='%234a3f2d' stroke-width='3'/><rect x='180' y='80' width='40' height='40' fill='%23f0e6d2' stroke='%234a3f2d' stroke-width='2'/><path d='M200,120 L200,100' stroke='%234a3f2d' stroke-width='3'/><path d='M180,100 L220,100' stroke='%234a3f2d' stroke-width='3'/><circle cx='200' cy='70' r='10' fill='%23c9a227'/><path d='M80,220 L320,220' stroke='%234a3f2d' stroke-width='2' stroke-dasharray='5,5'/><path d='M120,180 L280,180' stroke='%238b0000' stroke-width='3'/><path d='M150,160 L250,160' stroke='%238b0000' stroke-width='3'/><path d='M180,140 L220,140' stroke='%238b0000' stroke-width='3'/><path d='M100,200 L100,150' stroke='%234a3f2d' stroke-width='2'/><path d='M300,200 L300,150' stroke='%234a3f2d' stroke-width='2'/><circle cx='100' cy='135' r='15' fill='%23c9a227'/><circle cx='300' cy='135' r='15' fill='%23c9a227'/><path d='M50,150 Q100,120 150,150' stroke='%234a3f2d' stroke-width='2' fill='none'/></svg>" alt="Schlacht im Ärmelkanal">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="more-articles">
+            <div class="article-card">
+                <h3>Falsche Propheten: Das Geheimnis der Spendenfänger!</h3>
+                <p>Die Chronisten der Königlichen Post haben die Taschen vieler "Fan-Seiten" durchleuchtet. Erfahrt, welche Sünde sich hinter manchem Spendenaufruf verbirgt...</p>
+                <a href="fanpages.html" class="read-more">Weiterlesen</a>
+            </div>
+            <div class="article-card">
+                <h3>Neuer Glaube - Kathedrale CipSoft</h3>
+                <p>Nach Jahren Bauzeit wurde gestern die neue Kathedrale in Canterbury in einer feierlichen Zeremonie durch den Erzbischof geweiht. Tausende Pilger erfreuten sich an...</p>
+                <a href="cipsoft.html" class="read-more">Weiterlesen</a>
+            </div>
+            <div class="article-card">
+                <h3>Die Rückkehr der Handwerkskunst</h3>
+                <p>In einer Zeit, da jeder zweite PageBuilder verspricht, „mit KI in Minuten eine Website zu zaubern“, besinnen sich kluge Köpfe wieder auf die alten Künste: HTML und CSS...</p>
+                <a href="handwerkskunst.html" class="read-more">Weiterlesen</a>
+            </div>
+            <div class="article-card">
+                <h3>Königlicher Hof sucht talentierte Musiker</h3>
+                <p>Seine Majestät König Edward hat bekannt gegeben, dass der königliche Hof nach neuen Talenten im Bereich der Musik sucht. Bewerber müssen mindestens zwei Instrumente...</p>
+                <a href="#" class="read-more">Weiterlesen</a>
+            </div>
+        </section>
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Wir grüßen alle Reisenden!</h2>
+                <p>Schön, Euch auf unserem Blatte willkommen zu heißen! Schaut Euch um, lest die Neuigkeiten und schöpft Wissen. Solltet Ihr Fragen haben oder den Austausch mit Adel suchen, so seid Ihr herzlich eingeladen, unserem digitalem Hofe beizutreten – unserer Königlichen Burg.</p>
+                <a href="burg.html" class="subscribe-btn">Zu Hofe!</a>
+            </div>
+        </section>
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Die Königliche Post</div>
+                <div class="footer-info">
+                    <div class="footer-section">
+                        <h4>Kontakt</h4>
+                        <p>Hofdruckerei des Königs<br>Berlin und Cölln<br>Bote fragen nach <br> Hubert</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="archiv.html">Archiv der Ausgaben</a></li>
+                            <li><a href="berichterstattung.html">Berichterstattung vorschlagen</a></li>
+                            <li><a href="impressum.html">Impressum & Datenschutz</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Über uns</h4>
+                        <ul class="footer-links">
+                            <li><a href="schreiber.html">Unsere Schreiber</a></li>
+                            <li><a href="chronik.html">Geschichte der Post</a></li>
+                            <li><a href="adel.html">Königliches Privileg</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    © Anno Domini 2025 - Die Königliche Post. Alle Rechte vorbehalten. Nachdruck nur mit Genehmigung der königlichen Druckerei.
+                    - Die Zeitung ist rein statisch (html/css)
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        // Einfache Animation beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('header, nav, .hero, .article-card, .cta, footer');
+
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.animation = 'fadeIn 0.8s ease-out forwards';
+                }, 150 * index);
+            });
+
+            // Zufälliges Knackgeräusch für Pergament-Effekt
+            const crackle = () => {
+                const crack = document.createElement('div');
+                crack.style.position = 'fixed';
+                crack.style.top = Math.random() * 100 + 'vh';
+                crack.style.left = Math.random() * 100 + 'vw';
+                crack.style.width = '40px';
+                crack.style.height = '2px';
+                crack.style.background = 'rgba(139, 69, 19, 0.3)';
+                crack.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+                crack.style.pointerEvents = 'none';
+                crack.style.zIndex = '1000';
+                crack.style.opacity = '0';
+                crack.style.transition = 'opacity 3s ease';
+                document.body.appendChild(crack);
+
+                setTimeout(() => {
+                    crack.style.opacity = '1';
+                }, 10);
+
+                setTimeout(() => {
+                    crack.style.opacity = '0';
+                }, 1000);
+
+                setTimeout(() => {
+                    document.body.removeChild(crack);
+                }, 4000);
+            };
+
+            // Starte den Effekt und wiederhole in zufälligen Abständen
+            setInterval(crackle, 3000 + Math.random() * 7000);
+            crackle();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Königliche Post - Impressum & Datenschutz</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
+    <style>
+        /* Deine bestehenden CSS-Variablen */
+        :root {
+            --parchment: #f5e9c9;
+            --parchment-dark: #e2d3a9;
+            --ink: #2c2416;
+            --ink-light: #4a3f2d;
+            --red-seal: #8b0000;
+            --gold: #c9a227;
+            --border-style: 1px solid rgba(139, 69, 19, 0.3);
+            --decorative-border: 4px double var(--gold);
+        }
+        /* Deine bestehenden globalen Styles (body, *, .newspaper, header, nav) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Old Standard TT', serif;
+            background-color: #d4c19c;
+            color: var(--ink);
+            background-image: radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.3) 0px, transparent 50%),
+                              radial-gradient(circle at 90% 80%, rgba(160, 130, 90, 0.2) 0px, transparent 50%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .newspaper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--parchment);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grain)"/></svg>');
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 40px rgba(139, 69, 19, 0.1) inset;
+            border: 12px double #8B4513;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            animation: float 8s ease-in-out infinite;
+        }
+        .newspaper::before, .newspaper::after { content: ""; position: absolute; z-index: 0; pointer-events: none; }
+        .newspaper::before { top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle at 70% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 40%); }
+        .newspaper::after { bottom: 30px; left: 20px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(160, 82, 45, 0.1) 0%, transparent 70%); }
+        header { text-align: center; padding: 30px 20px 20px; border-bottom: var(--border-style); position: relative; background: linear-gradient(to bottom, var(--parchment) 60%, var(--parchment-dark)); }
+        .header-content { position: relative; z-index: 2; }
+        .crest { width: 120px; height: 120px; margin: 0 auto 15px; background: var(--red-seal); border: 8px double var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); animation: pulse 4s infinite ease-in-out; }
+        .crest::before { content: "✠"; font-size: 60px; color: var(--gold); }
+        .crest::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(201, 162, 39, 0.5); }
+        h1 { font-family: 'Cinzel', serif; font-size: 3.2rem; text-transform: uppercase; letter-spacing: 3px; margin: 10px 0; color: var(--ink); text-shadow: 2px 2px 4px rgba(44, 36, 22, 0.2); position: relative; }
+        h1::after { content: ""; display: block; width: 200px; height: 3px; background: linear-gradient(90deg, transparent, var(--red-seal), transparent); margin: 10px auto; }
+        .subtitle { font-family: 'MedievalSharp', cursive; font-size: 1.2rem; color: var(--ink-light); margin-bottom: 10px; }
+        .date { font-style: italic; margin-top: 5px; font-size: 0.9rem; }
+        nav { margin: 20px 0; padding: 15px; border-top: var(--border-style); border-bottom: var(--border-style); background: linear-gradient(to right, transparent, var(--parchment-dark), transparent); }
+        .nav-links { display: flex; justify-content: center; list-style: none; flex-wrap: wrap; gap: 15px 30px; }
+        .nav-links a { font-family: 'MedievalSharp', cursive; text-decoration: none; color: var(--ink); font-size: 1.1rem; position: relative; padding: 5px 0; transition: all 0.3s ease; }
+        .nav-links a:hover { color: var(--red-seal); }
+        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--red-seal); transition: width 0.3s ease; }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* NEUE SEKTION: Impressum & Datenschutz */
+        .legal-content {
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--parchment);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1), inset 0 0 25px rgba(139, 69, 19, 0.05);
+            border-left: var(--decorative-border);
+            border-right: var(--decorative-border);
+            margin-bottom: 30px;
+        }
+
+        .legal-content h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--red-seal);
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--ink-light);
+        }
+
+        .legal-content h3 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.8rem;
+            color: var(--ink);
+            margin-top: 40px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--ink-light);
+            text-shadow: 1px 1px 1px rgba(44, 36, 22, 0.1);
+        }
+
+        .legal-content p, .legal-content ul {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .legal-content ul {
+            list-style: disc; /* Mittelalterliche Aufzählungen sind oft schlicht */
+            padding-left: 30px;
+        }
+        .legal-content ul li {
+            margin-bottom: 8px;
+        }
+        .legal-content a {
+            color: var(--red-seal);
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+        .legal-content a:hover {
+            color: var(--gold);
+        }
+
+        /* Anker-Navigation für Impressum/Datenschutz */
+        .legal-nav {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.1rem;
+        }
+        .legal-nav a {
+            display: inline-block;
+            margin: 0 15px;
+            color: var(--ink-light);
+            text-decoration: none;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        .legal-nav a:hover {
+            color: var(--red-seal);
+        }
+        .legal-nav a::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--red-seal);
+            transition: width 0.3s ease;
+        }
+        .legal-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Deine bestehenden more-articles, cta, footer, animations, responsive */
+        .cta {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--parchment) 40%, var(--parchment-dark));
+            border-top: var(--border-style);
+            position: relative;
+        }
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .cta h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        .cta p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .subscribe-btn {
+            display: inline-block;
+            background: var(--red-seal);
+            color: var(--parchment);
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 12px 35px;
+            border: 3px double var(--gold);
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .subscribe-btn:hover {
+            background: #6d0000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .subscribe-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            width: 20px;
+            height: 150%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+        }
+        .subscribe-btn:hover::before {
+            left: 110%;
+        }
+        footer {
+            padding: 30px 40px;
+            background: var(--ink);
+            color: var(--parchment);
+            text-align: center;
+            position: relative;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .footer-section {
+            text-align: left;
+            max-width: 250px;
+        }
+        .footer-section h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: var(--parchment);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+        .copyright {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(201, 162, 39, 0.3);
+            font-size: 0.9rem;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); } 50% { transform: scale(1.03); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) {
+            .legal-content h2 {
+                font-size: 2rem;
+            }
+            .legal-content h3 {
+                font-size: 1.5rem;
+            }
+            .legal-content p, .legal-content ul {
+                font-size: 1rem;
+            }
+            .legal-content {
+                padding: 20px;
+            }
+            .legal-nav a {
+                margin: 0 8px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <header>
+            <div class="header-content">
+                <div class="crest"></div>
+                <h1>Die Königliche Post</h1>
+                <div class="subtitle">Amtliches Nachrichtenblatt des Reiches</div>
+                <div class="date">Anno Domini 1457, den 29. Tag des Monats Juli</div>
+            </div>
+        </header>
+          <nav>
+           <ul class="nav-links">
+                <li><a href="index.html">Aktuelles</a></li>
+                <li><a href="burg.html">Höfe & Adel</a></li>
+                <li><a href="steuern.html">Handel & Wirtschaft</a></li>
+                <li><a href="ketzerei.html">Kirchen & Glaube</a></li> 
+                <li><a href="kultur.html">Kultur & Gelehrsamkeit</a></li>
+
+            </ul>
+        </nav>
+
+        <main class="legal-content">
+            <h2>Königliche Bestimmungen und Schutz Eurer Daten</h2>
+
+            <div class="legal-nav">
+                <a href="#impressum">Zum Impressum</a>
+                <a href="#datenschutz">Zum Datenschutz</a>
+            </div>
+
+            <h3 id="impressum">I. Das Impressum – Wer sind die Herolde?</h3>
+            <p>Diese Website wird betrieben von den ehrenwerten Schreibern der **Königlichen Post**, einem Zusammenschluss von wackeren Berichterstattern und Chronisten aus dem Hause der Gamer. Wir sind eine rein private Unternehmung ohne kommerzielle Absichten und verstehen uns als Eure vertrauenswürdigen Quellen für Kunde aus der Welt der digitalen Schlachten und Reiche.</p>
+
+            <p><strong>Verantwortlich für diese Seite im Sinne der Gesetze:</strong></p>
+            <ul>
+                <li>Königlichen Post</li>
+                 <li>Volkan K-Budak</li>
+                <li>xxx@protonmail.com</li>
+            </ul>
+            <p><em>Hinweis: Da wir keine physische Geschäftsstelle im herkömmlichen Sinne betreiben, ist die Angabe einer Postanschrift nicht nötig.</em></p>
+
+            <p><strong>Vertretung:</strong></p>
+            <p>Da wir ein lose organisiertes Kollektiv sind, agiert der oben genannte Schreiber als alleiniger Ansprechpartner für alle Belange dieser Publikation.</p>
+
+            <p><strong>Journalistisch-redaktionelle Inhalte:</strong></p>
+            <p>Wir betreiben journalistisch-redaktionelle Tätigkeiten im Sinne des Staatsvertrages für Rundfunk und Telemedien (MStV). Wir sind der Wahrhaftigkeit und Objektivität verpflichtet, so wie es die alten Meistern der Berichterstattung lehrten.</p>
+
+            <p><strong>Haftung für Inhalte:</strong></p>
+            <p>Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Dienstleister sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Dienstleister jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+
+            <p><strong>Urheberrecht:</strong></p>
+            <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nicht gestatt.</p>
+
+            ---
+
+            <h3 id="datenschutz">II. Schutz Eurer Seelen und Daten – Eine königliche Erklärung</h3>
+            <p>Uns, der Königlichen Post, ist der Schutz Eurer persönlichen Daten von höchster Wichtigkeit. Wir behandeln Eure persönlichen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung. Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich.</p>
+
+            <h4>II.1 Datenverarbeitung auf dieser Website (Statische Natur)</h4>
+            <p>Diese Website ist rein statischer Natur. Das bedeutet, dass wir selbst **keine personenbezogenen Daten erfassen, speichern oder verarbeiten**. Es gibt keine Kontaktformulare, Kommentarfunktionen, Tracking-Tools oder ähnliche Dienste, die direkt von uns auf dieser Website implementiert sind.</p>
+
+            <h4>II.2 Externe Dienste: Google Fonts</h4>
+            <p>Wir nutzen auf dieser Website **Google Fonts** (Schriftarten), um Euch ein ansprechendes und konsistentes Schriftbild zu bieten, das im Einklang mit dem historischen Thema unserer Publikation steht. Das Laden dieser Schriftarten erfolgt von Servern der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland. Dabei wird Eure IP-Adresse an Google übertragen.</p>
+            <p>Der Einsatz von Google Fonts erfolgt in unserem berechtigten Interesse, eine ästhetisch ansprechende Darstellung unserer Online-Inhalte zu gewährleisten (Art. 6 Abs. 1 lit. f DSGVO). Die Übertragung der IP-Adresse ist technisch notwendig, um die Schriftarten an Euren Browser zu übermitteln.</p>
+            <p>Weitere Informationen zum Umgang mit Nutzerdaten bei Google Fonts findet Ihr in der Datenschutzerklärung von Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a></p>
+
+            <h4>II.3 Unser Discord-Server ("Die Burg")</h4>
+            <p>Wir laden Euch ein, unserer "Burg", unserem **Discord-Server**, beizutreten. Dieser Server ist eine externe Plattform, die von Discord Inc., 444 De Haro Street, Suite 200, San Francisco, CA 94107, USA, betrieben wird.</p>
+            <p>Bitte beachtet, dass Discord eigene Datenschutzrichtlinien und Nutzungsbedingungen hat, sobald Ihr den Server betretet oder dort interagiert. Wir haben keinen Einfluss auf die Datenerhebung und -verarbeitung durch Discord. Wir bemühen uns jedoch, den Server mit so wenig zusätzlichen Bots oder Plugins wie möglich zu betreiben, um die Sicherheit zu gewährleisten.</p>
+            <p>Die Nutzung unseres Discord-Servers ist freiwillig. Bevor Ihr beitretet, empfehlen wir dringend, die Datenschutzrichtlinie von Discord zu lesen: <a href="https://discord.com/privacy" target="_blank" rel="noopener noreferrer">https://discord.com/privacy</a></p>
+
+            <h4>II.4 Keine Cookies, Tracking oder Analysetools</h4>
+            <p>Wir, die Königliche Post, setzen auf dieser Website **keine Cookies** (außer denen, die technisch notwendig sind, um Google Fonts zu laden, was von Google verwaltet wird, nicht von uns), **keine Web-Analysetools** (wie Google Analytics) und **keine anderen Tracking-Technologien** ein. Euer Besuch auf unserer statischen Seite ist so anonym wie eine Nachricht, die von einem stummen Boten überbracht wird.</p>
+
+            <h4>II.5 Eure Rechte als Betroffener</h4>
+            <p>Als wackere Bürger des digitalen Reiches habt Ihr im Hinblick auf Eure Daten bestimmte Rechte:</p>
+            <ul>
+                <li>**Recht auf Auskunft:** Ihr habt das Recht, Auskunft darüber zu verlangen, ob und welche Eurer personenbezogenen Daten wir verarbeiten.</li>
+                <li>**Recht auf Berichtigung:** Ihr habt das Recht auf Berichtigung unrichtiger oder unvollständiger Daten.</li>
+                <li>**Recht auf Löschung (Recht auf Vergessenwerden):** Ihr habt das Recht, die Löschung Eurer Daten zu verlangen. Da wir selbst keine Daten speichern, betrifft dies hauptsächlich Anfragen bezüglich der Daten, die durch externe Dienste (Google Fonts, Discord) verarbeitet werden.</li>
+                <li>**Recht auf Einschränkung der Verarbeitung:** Ihr habt das Recht, die Einschränkung der Verarbeitung Eurer Daten zu verlangen.</li>
+                <li>**Recht auf Datenübertragbarkeit:** Ihr habt das Recht, Eure Daten in einem strukturierten, gängigen und maschinenlesbaren Format zu erhalten.</li>
+                <li>**Widerspruchsrecht:** Ihr habt das Recht, aus Gründen, die sich aus Eurer besonderen Situation ergeben, jederzeit gegen die Verarbeitung Euch betreffender personenbezogener Daten Widerspruch einzulegen.</li>
+                <li>**Recht auf Beschwerde bei einer Aufsichtsbehörde:** Ihr habt das Recht, Euch bei einer Aufsichtsbehörde zu beschweren, wenn Ihr der Ansicht seid, dass die Verarbeitung der Euch betreffenden Daten gegen datenschutzrechtliche Bestimmungen verstößt.</li>
+            </ul>
+            <p>Für die Ausübung Eurer Rechte oder bei Fragen zum Datenschutz könnt Ihr Euch jederzeit an die im Impressum genannte Kontaktadresse wenden.</p>
+
+            <p>Diese Datenschutzerklärung wurde zuletzt aktualisiert am: **29. Juli 1457**.</p>
+        </main>
+
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Verpassen Sie keine Nachricht!</h2>
+                <p>Abonnieren Sie "Die Königliche Post" und erhalten Sie alle wichtigen Nachrichten des Reiches direkt in Ihre Burg oder Stadtresidenz. Unsere Boten reiten wöchentlich aus, um Sie mit den neuesten Informationen zu versorgen.</p>
+                <a href="#" class="subscribe-btn">Jetzt Abonnieren</a>
+            </div>
+        </section>
+       <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Die Königliche Post</div>
+                <div class="footer-info">
+                    <div class="footer-section">
+                        <h4>Kontakt</h4>
+                        <p>Hofdruckerei des Königs<br>Berlin und Cölln<br>Bote fragen nach <br> Hubert</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="archiv.html">Archiv der Ausgaben</a></li>
+                            <li><a href="berichterstattung.html">Berichterstattung vorschlagen</a></li>
+                            <li><a href="impressum.html">Impressum & Datenschutz</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Über uns</h4>
+                        <ul class="footer-links">
+                            <li><a href="schreiber.html">Unsere Schreiber</a></li>
+                            <li><a href="chronik.html">Geschichte der Post</a></li>
+                            <li><a href="adel.html">Königliches Privileg</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    © Anno Domini 2025 - Die Königliche Post. Alle Rechte vorbehalten. Nachdruck nur mit Genehmigung der königlichen Druckerei.
+                    - Die Zeitung ist rein statisch (html/css)
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        // Einfache Animation beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('header, nav, .legal-content, .cta, footer');
+
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.animation = 'fadeIn 0.8s ease-out forwards';
+                }, 150 * index);
+            });
+
+            // Zufälliges Knackgeräusch für Pergament-Effekt
+            const crackle = () => {
+                const crack = document.createElement('div');
+                crack.style.position = 'fixed';
+                crack.style.top = Math.random() * 100 + 'vh';
+                crack.style.left = Math.random() * 100 + 'vw';
+                crack.style.width = '40px';
+                crack.style.height = '2px';
+                crack.style.background = 'rgba(139, 69, 19, 0.3)';
+                crack.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+                crack.style.pointerEvents = 'none';
+                crack.style.zIndex = '1000';
+                crack.style.opacity = '0';
+                crack.style.transition = 'opacity 3s ease';
+                document.body.appendChild(crack);
+
+                setTimeout(() => {
+                    crack.style.opacity = '1';
+                }, 10);
+
+                setTimeout(() => {
+                    crack.style.opacity = '0';
+                }, 1000);
+
+                setTimeout(() => {
+                    document.body.removeChild(crack);
+                }, 4000);
+            };
+
+            // Starte den Effekt und wiederhole in zufälligen Abständen
+            setInterval(crackle, 3000 + Math.random() * 7000);
+            crackle();
+        });
+    </script>
+</body>
+</html>

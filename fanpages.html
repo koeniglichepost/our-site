@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Königliche Post - Fanprojekte: Kunde aus Überzeugung oder Scharlatanerie?</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
+    <style>
+        /* Deine bestehenden CSS-Variablen */
+        :root {
+            --parchment: #f5e9c9;
+            --parchment-dark: #e2d3a9;
+            --ink: #2c2416;
+            --ink-light: #4a3f2d;
+            --red-seal: #8b0000;
+            --gold: #c9a227;
+            --border-style: 1px solid rgba(139, 69, 19, 0.3);
+            /* --decorative-border: 4px double var(--gold); ENTFERNT FÜR DIESE SEITE */
+        }
+        /* Deine bestehenden globalen Styles (body, *, .newspaper, header, nav) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Old Standard TT', serif;
+            background-color: #d4c19c;
+            color: var(--ink);
+            background-image: radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.3) 0px, transparent 50%),
+                              radial-gradient(circle at 90% 80%, rgba(160, 130, 90, 0.2) 0px, transparent 50%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .newspaper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--parchment);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grain)"/></svg>');
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 40px rgba(139, 69, 19, 0.1) inset;
+            border: 12px double #8B4513;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            animation: float 8s ease-in-out infinite;
+        }
+        .newspaper::before, .newspaper::after { content: ""; position: absolute; z-index: 0; pointer-events: none; }
+        .newspaper::before { top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle at 70% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 40%); }
+        .newspaper::after { bottom: 30px; left: 20px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(160, 82, 45, 0.1) 0%, transparent 70%); }
+        header { text-align: center; padding: 30px 20px 20px; border-bottom: var(--border-style); position: relative; background: linear-gradient(to bottom, var(--parchment) 60%, var(--parchment-dark)); }
+        .header-content { position: relative; z-index: 2; }
+        .crest { width: 120px; height: 120px; margin: 0 auto 15px; background: var(--red-seal); border: 8px double var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); animation: pulse 4s infinite ease-in-out; }
+        .crest::before { content: "✠"; font-size: 60px; color: var(--gold); }
+        .crest::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(201, 162, 39, 0.5); }
+        h1 { font-family: 'Cinzel', serif; font-size: 3.2rem; text-transform: uppercase; letter-spacing: 3px; margin: 10px 0; color: var(--ink); text-shadow: 2px 2px 4px rgba(44, 36, 22, 0.2); position: relative; }
+        h1::after { content: ""; display: block; width: 200px; height: 3px; background: linear-gradient(90deg, transparent, var(--red-seal), transparent); margin: 10px auto; }
+        .subtitle { font-family: 'MedievalSharp', cursive; font-size: 1.2rem; color: var(--ink-light); margin-bottom: 10px; }
+        .date { font-style: italic; margin-top: 5px; font-size: 0.9rem; }
+        nav { margin: 20px 0; padding: 15px; border-top: var(--border-style); border-bottom: var(--border-style); background: linear-gradient(to right, transparent, var(--parchment-dark), transparent); }
+        .nav-links { display: flex; justify-content: center; list-style: none; flex-wrap: wrap; gap: 15px 30px; }
+        .nav-links a { font-family: 'MedievalSharp', cursive; text-decoration: none; color: var(--ink); font-size: 1.1rem; position: relative; padding: 5px 0; transition: all 0.3s ease; }
+        .nav-links a:hover { color: var(--red-seal); }
+        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--red-seal); transition: width 0.3s ease; }
+        .nav-links a:hover::after { width: 100%; }
+        /* Blog Post/Single View Styles */
+        .blog-post {
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--parchment);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1), inset 0 0 25px rgba(139, 69, 19, 0.05);
+            /* border-left: var(--decorative-border); ENTFERNT */
+            /* border-right: var(--decorative-border); ENTFERNT */
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1; /* Make sure content is above pseudo-elements */
+        }
+        .post-meta {
+            font-family: 'MedievalSharp', cursive;
+            color: var(--ink-light);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            border-bottom: 1px dashed var(--ink-light);
+            padding-bottom: 15px;
+        }
+        .post-meta .author {
+            font-style: italic;
+        }
+        .blog-post h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: var(--red-seal);
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .blog-post h3 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 2rem;
+            color: var(--ink);
+            margin-top: 40px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--ink-light);
+            text-shadow: 1px 1px 1px rgba(44, 36, 22, 0.1);
+        }
+        .blog-post h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.5rem;
+            color: var(--ink-light);
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .blog-post p, .blog-post ul, .blog-post ol {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        .blog-post ul, .blog-post ol {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+        .blog-post ul li, .blog-post ol li {
+            margin-bottom: 8px;
+        }
+        .blog-post a {
+            color: var(--red-seal);
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+        .blog-post a:hover {
+            color: var(--gold);
+        }
+        .blog-post strong {
+            color: var(--red-seal);
+            font-weight: 700;
+        }
+        .blog-post em {
+            font-style: italic;
+            color: var(--ink-light);
+        }
+        .blog-post blockquote {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            font-style: italic;
+            margin: 30px 40px;
+            padding: 20px;
+            border-left: 5px solid var(--gold);
+            background-color: var(--parchment-dark);
+            color: var(--ink-light);
+            line-height: 1.5;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .blog-post img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 25px auto;
+            border: 5px double var(--gold);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .image-caption {
+            font-family: 'Old Standard TT', serif;
+            font-size: 0.9rem;
+            text-align: center;
+            color: var(--ink-light);
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .micdrop {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--red-seal);
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--ink-light);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: 2px;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .blog-post {
+                padding: 20px;
+            }
+            .blog-post h2 {
+                font-size: 2.2rem;
+            }
+            .blog-post h3 {
+                font-size: 1.7rem;
+            }
+            .blog-post h4 {
+                font-size: 1.3rem;
+            }
+            .blog-post p, .blog-post ul, .blog-post ol {
+                font-size: 1rem;
+            }
+            .blog-post blockquote {
+                margin: 20px 15px;
+                padding: 15px;
+                font-size: 1rem;
+            }
+            .micdrop {
+                font-size: 1.8rem;
+            }
+        }
+        /* Deine bestehenden CTA und Footer-Bereiche */
+        .cta {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--parchment) 40%, var(--parchment-dark));
+            border-top: var(--border-style);
+            position: relative;
+        }
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .cta h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        .cta p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .subscribe-btn {
+            display: inline-block;
+            background: var(--red-seal);
+            color: var(--parchment);
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 12px 35px;
+            border: 3px double var(--gold);
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .subscribe-btn:hover {
+            background: #6d0000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .subscribe-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            width: 20px;
+            height: 150%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+        }
+        .subscribe-btn:hover::before {
+            left: 110%;
+        }
+        footer {
+            padding: 30px 40px;
+            background: var(--ink);
+            color: var(--parchment);
+            text-align: center;
+            position: relative;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .footer-section {
+            text-align: left;
+            max-width: 250px;
+        }
+        .footer-section h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: var(--parchment);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+        .copyright {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(201, 162, 39, 0.3);
+            font-size: 0.9rem;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); } 50% { transform: scale(1.03); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <header>
+            <div class="header-content">
+                <div class="crest"></div>
+                <h1>Die Königliche Post</h1>
+                <div class="subtitle">Amtliches Nachrichtenblatt des Reiches</div>
+                <div class="date">Anno Domini 1457, den 29. Tag des Monats Juli</div>
+            </div>
+        </header>
+        <nav>
+           <ul class="nav-links">
+                <li><a href="index.html">Aktuelles</a></li>
+                <li><a href="burg.html">Höfe & Adel</a></li>
+                <li><a href="steuern.html">Handel & Wirtschaft</a></li>
+                <li><a href="ketzerei.html">Kirchen & Glaube</a></li>
+                 <li><a href="kultur.html">Kultur & Gelehrsamkeit</a></li>
+            </ul>
+        </nav>
+        <main class="blog-post">
+            <h2>Von der Kunst des Fanprojekts: Transparenz und wahrer Nutzen</h2>
+            <div class="post-meta">
+                Anno Domini 2025, am 29. Tag des Monats Juli · Eine Chronik der <span class="author">Königlichen Post</span>
+            </div>
+
+            <h3>I. Wahre Gemeinschaft im digitalen Zeitalter</h3>
+            <p>Die weiten Gassen des Cybers sind erfüllt von Treffpunkten, die sich den Künsten, Spielen oder Leidenschaften widmen: sogenannte <strong>Fanprojekte</strong>. Sie sollen eine Heimstatt für Gleichgesinnte sein, den Austausch fördern und das Wissen mehren. Doch in einer Zeit, in der der Schein oft trügt, stellt sich die Frage: Wie aufrichtig und von welchem Nutzen sind diese Unterfangen wirklich?</p>
+            <p>Wir, die Schreiber der Königlichen Post, haben unser eigenes kleines Reich hier in HTML und CSS errichtet, ein Zeugnis dafür, dass große Werke nicht zwingend komplexer oder kostspieliger Mittel bedürfen. So wie wir unser Geheimnis der "Handwerkskunst" gelüftet haben, möchten wir auch hier Transparenz schaffen und Euch zeigen, wie man ein Fanprojekt aus Überzeugung und nicht aus Eigennutz führt.</p>
+
+            <h3>II. Die Taler-Falle: Wenn Kosten den Nutzen übersteigen</h3>
+            <p>Immer wieder erreichen uns Kunde von Fanprojekten, die beständig um finanzielle Zuwendungen bitten, um ihre laufenden Ausgaben zu decken. Mitunter werden gar Summen von mehreren Hundert Goldstücken des Jahres für ein "einfaches digitales Pergament" verlangt. Wer die wahren Kosten für eine Heimstatt im Netz kennt, den befällt die drängende Frage: Wohin fließt all dieses Gold?</p>
+            <p>Ein Stück Land im weiten Netz, eine <strong>eigene "Domäne"</strong>, kostet im Jahr kaum mehr als neun bis neunzehn Goldstücke. Eine einfache Herberge für das digitale Werk, ein <strong>"Webhosting"</strong>, ist bereits für ein Goldstück und neunundneunzig Silberlinge des Monats zu haben – oft gar mit der Domäne selbst vereint. Dies summiert sich auf kaum fünfzig Goldstücke im Jahr. Selbst für prächtigere Gemächer bleiben die Kosten selten über hundert Goldstücken. Warum also die Rufe nach Zweihundert oder gar Dreihundert?</p>
+
+            <h3>III. Edle Pfade: Wirkungsvoll und wohlfeil</h3>
+            <p>Es gibt unzählige, gar **unentgeltliche oder sehr wohlfeile Herbergen** für Eure Gemeinschaft im Netz. Diese bieten oft weit mehr als bloße Beherbergung, unterstützen den ersten Schritt in die Kunst der Netz-Weberei und stellen zusätzliche Werkzeuge wie **"Foren"** oder **"Datenbanken"** bereit. Sie sind ideal für kleinere Unterfangen und lehren den Unerfahrenen, ohne sogleich in die kostspieligen Arme der großen Hosting-Mächte zu fallen.</p>
+            <p>Um die passende kostenlose Herberge zu finden, empfehlen wir Euch, die Weisheit Eurer bevorzugten **Künstlichen Intelligenz (KI)** zu befragen. Bittet sie um eine Liste guter und kostenloser Webhoster, die Euren Bedürfnissen entsprechen. So erhaltet Ihr stets die aktuellste Kunde über die besten und seriösesten Angebote!</p>
+            <p>Eine Fanseite sollte mehr sein als nur eine Anwesenheit. Der wahre Wert für die Gemeinschaft muss im Vordergrund stehen: Wohlgeordnete Kunde, nützliche Werkzeuge und eine klare Führung für den Suchenden. Derzeit aber scheinen viele nur billige Kopien zu sein, die den Schweiß anderer stehlen und auf das bloße Klirren der Klicks jagen!</p>
+
+            <h3>IV. Die Bürde des Netz-Verwalters und unser transparenter Ansatz</h3>
+            <p>Das Betreiben eines digitalen Pergaments erfordert ein grundlegendes Wissen um die Kunst der Netz-Gestaltung, die Wächterschaft der Sicherheit und die rechte Führung der digitalen Herberge. Viele Nöte entspringen, wenn die Betreiber ohne Verstand in teure Lösungen hasten und hernach mit technischen oder finanziellen Mühen ringen. Gerade bei komplexeren Anbietern sollte man gewiss sein, dass man die nötige Fertigkeit besitzt – oder sich um weisen Beistand bemüht.</p>
+            <p>Wir bei der Königlichen Post zeigen Euch, dass es auch einfacher geht: Dieses gesamte Blatt ist von Hand mit **HTML und CSS** gewirkt. Keine komplexen Systeme wie WordPress, die zwar mächtig sind, aber auch viel Wissen und Wartung erfordern. Wer jedoch den Pfad des WordPress beschreiten möchte, dem sei gesagt: Es gibt Wege, dies wohlfeil und unabhängig zu tun.</p>
+
+            <h3>V. "Ich gab mein Blut und mein Gold" – Ein falsches Schild?</h3>
+            <p>Oft wird der Aufwand für Fanprojekte mit dem Argument verteidigt, dass viel Lebenszeit und persönliche Güter investiert wurden. Doch verdient dies wahre Anerkennung? Nicht, wenn man einzig die Werke anderer plagiatiert, deren Mühen stiehlt und sich hernach als strahlender Held feiert. Wahre Aufrichtigkeit gegenüber der Gemeinschaft ist ebenso vonnöten, besonders für die Hobby-Bastler, die sich gebaren, als wolle man ihnen ihren verbuggten Augenkrebs entreißen.</p>
+
+            <h3>VI. Unser Ansinnen: Hilfe statt Tadel – Der Weg der Königlichen Post</h3>
+            <p>Wir, die wachsamen Schreiber der **Königlichen Post**, wollen nicht nur tadeln, sondern auch Wege zum Besseren aufzeigen. Mit unentgeltlichen Werkzeugen der offenen Quelle und unserem Beistand helfen wir Euch, Fanprojekte zu erschaffen, die wohlfeil, sicher und der Gemeinschaft wahrhaft nützlich sind. Wir zeigen, dass eine eigene Webseite in HTML und CSS nicht nur schneller, sondern auch flexibler und transparenter sein kann, da man volle Kontrolle über jeden einzelnen Pinselstrich hat.</p>
+            <p>Habt den Mut, Euch selbst die Frage zu stellen: "Was kann ich besser wirken?" Wir reichen Euch gerne die Hand, Eure Gedanken in die Tat umzusetzen.</p>
+            <p><strong>Fanprojekte kritisch beäugt! Lasst uns beginnen!</strong></p>
+            <hr>
+
+            <h3>VII. Ein Edikt für die vollkommene Alternative</h3>
+            <p>Wir sehen uns als Herolde der Kunde, nicht als bloßes Fanprojekt. Dennoch haben wir bemerkt, dass viele sogenannte Fanprojekte beständig Almosen sammeln – mitunter mehrere Hundert Goldstücke des Jahres. Doch wofür eigentlich? Herberge und Domänen kosten wahrlich nicht annähernd so viel. Wir möchten dies kritisch durchleuchten und zugleich aufzeigen, dass es auch anders geht: Unentgeltlich, wirkungsvoll, aufrichtig und sicher.</p>
+
+            <h3>VIII. Die Leiden der Fanprojekte – Eine Aufzählung der Mängel</h3>
+            <ul>
+                <li><strong>Spendenrufe ohne klaren Nutzen:</strong> Eine Domäne kostet etwa neun bis neunzehn Goldstücke des Jahres, und die Herberge liegt bei einem bis vier Goldstücken und neunundneunzig Silberlingen des Monats (oft mitsamt der Domäne). Warum also zweihundert bis dreihundert Goldstücke?</li>
+                <li><strong>Verstöße gegen den Schutz der Daten und geltendes Recht:</strong> Manche Fanprojekte laden fremde Kunde (externe Ressourcen), setzen heimlich "Kekse" (Cookies) ohne Aufklärung oder treiben gar Handel mit Konten und Gütern. Dies geschieht oft im Verborgenen und ist rechtlich höchst fragwürdig.</li>
+                <li><strong>Mangelnde Kenntnis des Handwerks:</strong> Webseiten werden betrieben, ohne grundlegendes Wissen über Herberge, Sicherheit oder die Verordnungen zum Datenschutz (DSGVO). Dies führt zu Nöten, die leicht vermeidbar wären.</li>
+            </ul>
+
+            <h3>IX. Der königliche Leitfaden für ein vollkommenes Fanprojekt</h3>
+            <p>Ob Ihr Euch entscheidet, Euer Projekt klassisch mit HTML und CSS zu wirken, wie die Königliche Post selbst, oder ob Ihr die Vorzüge eines Content-Management-Systems wie WordPress nutzen wollt – hier sind unsere Ratschläge:</p>
+
+            <h4>A. Domain & Herberge (Hosting):</h4>
+            <ul>
+                <li><strong>Unentgeltliche Alternativen:</strong> Fragt Eure bevorzugte **Künstliche Intelligenz (KI)** nach "guten und kostenlosen Webhostern je nach Bedarf". Sie kann Euch tagesaktuell die besten Optionen für Euer Vorhaben nennen.</li>
+                <li><strong>Kostenübersicht:</strong> Selbst für bezahlte Herbergsdienste belaufen sich die Kosten auf höchstens fünfzig Goldstücke im Jahr (inklusive Domäne). Spendenrufe in Höhe von Hunderten Goldstücken sind somit nicht gerechtfertigt.</li>
+            </ul>
+
+            <h4>B. WordPress errichten (optional, da wir selbst reines HTML/CSS nutzen):</h4>
+            <ul>
+                <li>Installiert <a href="https://wordpress.org/" target="_blank" rel="noopener noreferrer">"WordPress"</a> eigenhändig für vollkommene Kontrolle oder mit einem "Ein-Klick-Installierer" für den raschen Beginn.</li>
+                <li>Haltet Euch an Herbergsdienste, die den **DSGVO-Regeln** gehorchen.</li>
+            </ul>
+
+            <h4>C. Gewand ("Theme") wählen (für WordPress):</h4>
+            <ul>
+                <li>Nutzt rasche, anpassbare Gewänder wie <a href="https://wpastra.com/" target="_blank" rel="noopener noreferrer">"Astra"</a> oder <a href="https://oceanwp.org/" target="_blank" rel="noopener noreferrer">"OceanWP"</a>. Die **"Twenty Twenty"-Gewänder von WordPress selbst sind ein wahrer Triumph** und werden über viele Jahre gepflegt; sie sind flink, werden oft in anderen Gewändern genutzt und sind bestens dokumentiert. So lernt man mit seiner Fan-Seite und wächst mit ihr.</li>
+                <li>Achtet darauf, dass Euer Gewand auch auf den kleineren digitalen Schilden (Mobilgeräten) wohl erscheint. Bleibt bei "Twenty Twenty", es ist einfach gut!</li>
+            </ul>
+
+            <h4>D. Wichtige Zusätze ("Plugins") (für WordPress):</h4>
+            <ul>
+                <li><strong>Beschleunigung ("Caching"):</strong> <a href="https://wordpress.org/plugins/wp-super-cache/" target="_blank" rel="noopener noreferrer">"WP Super Cache"</a> oder ähnliche Zusätze für Geschwindigkeit.</li>
+                <li><strong>Sicherheit:</strong> <a href="https://wordpress.org/plugins/better-wp-security/" target="_blank" rel="noopener noreferrer">"Better WP Security"</a> oder <a href="https://wordpress.org/plugins/bulletproof-security/" target="_blank" rel="noopener noreferrer">"Bulletproof Security"</a>.</li>
+                <li><strong>Keks-Hinweise ("Cookie-Notices"):</strong> Ein einfacher Zusatz für Cookie-Hinweise (keine fremden Kunde!).</li>
+                <li><strong>Meidet "JetPack":</strong> "JetPack" ist ein Albtraum der DSGVO!</li>
+                <li><strong>Wichtigster Zusatz:</strong> Unser <strong>"Antiaugenkrebs-Plugin der Königlichen Post"</strong> – um die Bilder Eurer Taktikkarten in einem modernen, wechselwirkenden Stil zu präsentieren. Wir haben ein Geheimnis eingebaut, achtet auf den "Propeller" – wer als Erster errät, was wir meinen, gewinnt! Ratet in den Kommentaren. Hütet Euch, Eure Galerie wird mit "LazyLoad" nicht funktionieren. Wollt Ihr dies ergründen, so fragt uns. Eure Bilder für die Seite selbst könnt Ihr mit Optionen wie Fade In Fade Up beleben, was einem verzögerten Laden gleicht.</li>
+                <li>Wenn Ihr ein "Twenty Twenty"-Gewand von WordPress nutzt, könnt Ihr Zusätze wie <a href="https://wordpress.org/plugins/options-for-twentytwenty/" target="_blank" rel="noopener noreferrer">"Options for Twenty Twenty"</a> oder <a href="https://wordpress.org/plugins/twentig/" target="_blank" rel="noopener noreferrer">"Twentig"</a> verwenden. Ihr werdet es lieben.</li>
+            </ul>
+
+            <h4>E. Die Ordnung des Pergaments (Struktur Eurer Seite):</h4>
+            <ul>
+                <li><strong>Heimstatt:</strong> Übersichtliche Darbietung der Kunde und der Gemeinschaft.</li>
+                <li><strong>Abenteuer & Karten:</strong> Ein Bereich für Taktiken und Anleitungen.</li>
+                <li><strong>Forum:</strong> Einbindung eines Forums oder Verweise zu einer <a href="https://discord.com/" target="_blank" rel="noopener noreferrer">"Discord-Burg"</a> oder Ähnlichem.</li>
+                <li><strong>Neuigkeiten:</strong> Eine Rolle für die neuesten Kunde und Ratschläge.</li>
+                <li><strong>Kontakt:</strong> Ein Formular oder eine E-Mail-Adresse für Anfragen.</li>
+            </ul>
+
+            <h4>F. Die Inhalte:</h4>
+            <ul>
+                <li>Vermeidet doppelte Kunde. Google straft "Doppelte Inhalte" ab, also keine wortwörtlichen Kopien von anderen Fan-Seiten!</li>
+                <li>Verbessert die Bilder für geringere Dateigrößen. Nutzt hierfür unsere unentgeltliche "Bild-Optimierer-App": Schaut unter Tools.</li>
+            </ul>
+
+            <h4>G. Rechtlicher Schutz:</h4>
+            <ul>
+                <li>Ladet keine fremden Kunde (z.B. Google-Schriftarten, Karten). Wenn Ihr sie benötigt, könnt Ihr sie auf Eurem eigenen Hof speichern. Dies ist Standard bei "WordPress"-Gewändern wie "Twenty Twenty". Sagt doch, dies ist eine wahrhaft prächtige Gewänder-Reihe.</li>
+            </ul>
+
+            <h4>H. Prüfung und Verkündung:</h4>
+            <ul>
+                <li>Prüft die Webseite gründlich: Funktioniert alles? Lädt die Seite rasch? Sind die Formulare bereit?</li>
+                <li>Geht in die Öffentlichkeit und teilt die Seite in den "Sozialen Medien" und der DSO-Gemeinschaft.</li>
+            </ul>
+
+            <h3>X. Warum eigene Fanprojekte von Bedeutung sind</h3>
+            <p>Ein eigenes Fanprojekt, ob als schlanke HTML/CSS-Seite oder als durchdachte WordPress-Installation, gibt Euch die volle Hoheit über Kunde und Gestaltung. Nutzt Plattformen wie den <a href="https://www.thesettlersonline.de/de/community/tools/swift-simulator" target="_blank" rel="noopener noreferrer">"Swift-Simulator"</a>, um Abenteuerkarten zu erstellen und mit unserem "Antiaugenkrebs-Plugin der Königlichen Post" ultraschnell und wundersam direkt mit Eurer Gemeinschaft zu teilen – ohne Klicks zu jagen oder unnötige Werbung zu dulden.</p>
+
+            <h3>XI. Einladung zur Waffengefährschaft</h3>
+            <p>Wenn Ihr Euer Fanprojekt nach unserem Leitfaden erschaffen habt, so meldet Euch bei uns, der **Königlichen Post**! Unser erfahrenes Team, darunter ein Server-Verwalter mit 23 Lenzen Erfahrung, hilft Euch gerne, Eure Seite technisch abzusichern (dies nennt man "Hardening"). Gemeinsam können wir eine bessere und beständigere Gemeinschaft erbauen, die unabhängig von Klicks und zweifelhaften Praktiken ist.</p>
+            <p>Dieser Leitfaden richtet sich an all jene, die Fanprojekte ohne die Abhängigkeit von Almosen und Klicks betreiben möchten. Fragen oder Gedanken? Schreibt uns oder nutzt unsere Plattformen! 😊</p>
+            <hr>
+
+            <h3>XII. Geheimes Wissen: Was viele "Fanprojekte" verbergen</h3>
+            <p>Viele sogenannte Fanprojekte nutzen nicht nur fremde Kunde wie Google-Schriftarten, Karten oder Verfolgungswerkzeuge – sie schalten auch Werbung über "Google AdSense" oder ähnliche Händler. Dabei wird der Anschein erweckt, man betreibe das Projekt einzig aus Liebe zur Gemeinschaft.</p>
+            <p>Doch wer die Regeln der <strong>"Siedler Online" (DSO)</strong> oder die Forenrichtlinien genau studiert, wird schnell gewahr:</p>
+            <p><strong>Wer mit DSO-Inhalten Taler verdienen will, wird verbannt.</strong></p>
+            <blockquote>
+                <p><strong>🔍 Original-Zitat aus den Ubisoft-Forenregeln:</strong></p>
+                <p>„Es ist nicht erlaubt, über Ubi.com kommerzielle Angebote oder Werbung zu verbreiten. Dazu zählt auch das Bewerben von kommerziellen Seiten oder von Seiten mit werbebasierter Finanzierung.“</p>
+            </blockquote>
+            <blockquote>
+                <p><strong>🧠 Übersetzung für alle, die kein Gelehrtendeutsch sprechen:</strong></p>
+                <p>„Wenn Du auf Deiner Seite Werbung trägst, während Du mit DSO-Zeug werkst, bist Du des Platzes verwiesen.“<br>
+                „Gleichgültig ob Google-Werbung, Partnerverweise oder Almosen mit 'PayPal' – es ist untersagt, wenn Du Inhalte von DSO nutzt.“</p>
+            </blockquote>
+            <p><strong>Dies betrifft:</strong></p>
+            <ul>
+                <li>Seiten mit "Google AdSense" oder ähnlicher Werbung</li>
+                <li>"Patreon"-Verweise, Spenden-Knöpfe oder "Kaffee spendieren"-Funktionen</li>
+                <li>Seiten, die DSO-Bilder, Karten oder Grafiken zeigen und damit Klicks (oder Einnahmen) erzeugen</li>
+                <li>Seiten, die Inhalte oder Ideen aus dem Spiel direkt zu Geld machen</li>
+            </ul>
+            <p><strong>🧨 Heißt also:</strong> Viele dieser "Fan-Projekte" sind in Wahrheit kleine Geschäftsmodelle mit einer unrechtmäßigen Grundlage.</p>
+            <p><strong>Die Königliche Post</strong> prüft derzeit die größten Seiten auf:</p>
+            <ul>
+                <li>Eingebundene Werbung</li>
+                <li>Verwendete Kunde (ob DSO-Material oder nur KI)</li>
+                <li>Technische Verstöße (Verfolgung, Kekse ohne Kunde)</li>
+                <li>DSGVO-Chaos</li>
+            </ul>
+            <p><strong>Und ja: Wir werden die Ergebnisse veröffentlichen. Schwarz auf Weiß.</strong></p>
+            <p><strong>💬 Schlusswort:</strong><br>
+            Die Königliche Post ist nicht hier, um zu zetern – sondern um zu zeigen, wie es besser gelingt.<br>
+            Unentgeltlich, unabhängig, aufrichtig. Ohne Werbung. Ohne Gier nach Klicks.<br>
+            Und mit dem vollsten Respekt für das Recht des Schöpfers und den Geist der Gemeinschaft. Was man leider auf keiner der Fan-Seiten mehr erblickt! Es war einst anders!</p>
+            <p><strong>Bitte bleibt ehrlich. Bleibt laut. Bleibt rein.</strong></p>
+            <div class="micdrop">MicDrop!</div>
+        </main>
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Wir grüßen alle Reisenden!</h2>
+                <p>Schön, Euch auf unserem Blatte willkommen zu heißen! Schaut Euch um, lest die Neuigkeiten und schöpft Wissen. Solltet Ihr Fragen haben oder den Austausch mit Gleichgesinnten suchen, so seid Ihr herzlich eingeladen, unserem digitalen Hof beizutreten – unserer Königlichen Burg.</p>
+                <a href="burg.html" class="subscribe-btn">Betretet die Burg!</a>
+            </div>
+        </section>
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Die Königliche Post</div>
+                <div class="footer-info">
+                    <div class="footer-section">
+                        <h4>Kontakt</h4>
+                        <p>Hofdruckerei des Königs<br>Berlin und Cölln<br>Bote fragen nach <br> Hubert</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="archiv.html">Archiv der Ausgaben</a></li>
+                            <li><a href="berichterstattung.html">Berichterstattung vorschlagen</a></li>
+                            <li><a href="impressum.html">Impressum & Datenschutz</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Über uns</h4>
+                        <ul class="footer-links">
+                            <li><a href="schreiber.html">Unsere Schreiber</a></li>
+                            <li><a href="chronik.html">Geschichte der Post</a></li>
+                            <li><a href="adel.html">Königliches Privileg</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    © Anno Domini 2025 - Die Königliche Post. Alle Rechte vorbehalten. Nachdruck nur mit Genehmigung der königlichen Druckerei.
+                    - Die Zeitung ist rein statisch (html/css)
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        // Einfache Animation beim Laden der Seite
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('header, nav, .blog-post, .cta, footer');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.animation = 'fadeIn 0.8s ease-out forwards';
+                }, 150 * index);
+            });
+            // Zufälliges Knackgeräusch für Pergament-Effekt
+            const crackle = () => {
+                const crack = document.createElement('div');
+                crack.style.position = 'fixed';
+                crack.style.top = Math.random() * 100 + 'vh';
+                crack.style.left = Math.random() * 100 + 'vw';
+                crack.style.width = '40px';
+                crack.style.height = '2px';
+                crack.style.background = 'rgba(139, 69, 19, 0.3)';
+                crack.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+                crack.style.pointerEvents = 'none';
+                crack.style.zIndex = '1000';
+                crack.style.opacity = '0';
+                crack.style.transition = 'opacity 3s ease';
+                document.body.appendChild(crack);
+                setTimeout(() => {
+                    crack.style.opacity = '1';
+                }, 10);
+                setTimeout(() => {
+                    crack.style.opacity = '0';
+                }, 1000);
+                setTimeout(() => {
+                    document.body.removeChild(crack);
+                }, 4000);
+            };
+            // Starte den Effekt und wiederhole in zufälligen Abständen
+            setInterval(crackle, 3000 + Math.random() * 7000);
+            crackle();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Königliche Post - Hall of Fame</title>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700&family=Old+Standard+TT&display=swap" rel="stylesheet">
+    <style>
+        /* Deine bestehenden CSS-Variablen */
+        :root {
+            --parchment: #f5e9c9;
+            --parchment-dark: #e2d3a9;
+            --ink: #2c2416;
+            --ink-light: #4a3f2d;
+            --red-seal: #8b0000;
+            --gold: #c9a227;
+            --border-style: 1px solid rgba(139, 69, 19, 0.3);
+            --decorative-border: 4px double var(--gold); /* Neu für Blog-Elemente */
+        }
+        /* Deine bestehenden globalen Styles (body, *, .newspaper, header, nav) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Old Standard TT', serif;
+            background-color: #d4c19c;
+            color: var(--ink);
+            background-image: radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.3) 0px, transparent 50%),
+                               radial-gradient(circle at 90% 80%, rgba(160, 130, 90, 0.2) 0px, transparent 50%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .newspaper {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--parchment);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.1"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grain)"/></svg>');
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2), 0 0 40px rgba(139, 69, 19, 0.1) inset;
+            border: 12px double #8B4513;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            animation: float 8s ease-in-out infinite;
+        }
+        .newspaper::before, .newspaper::after { content: ""; position: absolute; z-index: 0; pointer-events: none; }
+        .newspaper::before { top: 0; right: 0; width: 200px; height: 200px; background: radial-gradient(circle at 70% 30%, rgba(139, 69, 19, 0.15) 0%, transparent 40%); }
+        .newspaper::after { bottom: 30px; left: 20px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(160, 82, 45, 0.1) 0%, transparent 70%); }
+        header { text-align: center; padding: 30px 20px 20px; border-bottom: var(--border-style); position: relative; background: linear-gradient(to bottom, var(--parchment) 60%, var(--parchment-dark)); }
+        .header-content { position: relative; z-index: 2; }
+        .crest { width: 120px; height: 120px; margin: 0 auto 15px; background: var(--red-seal); border: 8px double var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); animation: pulse 4s infinite ease-in-out; }
+        .crest::before { content: "✠"; font-size: 60px; color: var(--gold); }
+        .crest::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(201, 162, 39, 0.5); }
+        h1 { font-family: 'Cinzel', serif; font-size: 3.2rem; text-transform: uppercase; letter-spacing: 3px; margin: 10px 0; color: var(--ink); text-shadow: 2px 2px 4px rgba(44, 36, 22, 0.2); position: relative; }
+        h1::after { content: ""; display: block; width: 200px; height: 3px; background: linear-gradient(90deg, transparent, var(--red-seal), transparent); margin: 10px auto; }
+        .subtitle { font-family: 'MedievalSharp', cursive; font-size: 1.2rem; color: var(--ink-light); margin-bottom: 10px; }
+        .date { font-style: italic; margin-top: 5px; font-size: 0.9rem; }
+        nav { margin: 20px 0; padding: 15px; border-top: var(--border-style); border-bottom: var(--border-style); background: linear-gradient(to right, transparent, var(--parchment-dark), transparent); }
+        .nav-links { display: flex; justify-content: center; list-style: none; flex-wrap: wrap; gap: 15px 30px; }
+        .nav-links a { font-family: 'MedievalSharp', cursive; text-decoration: none; color: var(--ink); font-size: 1.1rem; position: relative; padding: 5px 0; transition: all 0.3s ease; }
+        .nav-links a:hover { color: var(--red-seal); }
+        .nav-links a::after { content: ""; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--red-seal); transition: width 0.3s ease; }
+        .nav-links a:hover::after { width: 100%; }
+        /* NEUE SEKTION: Blog-Beitrag (Single View) */
+        .blog-post {
+            padding: 40px;
+            max-width: 900px; /* Etwas breiter als Hero */
+            margin: 0 auto;
+            position: relative;
+            background: var(--parchment); /* Wichtig für eigene Box-Shadow */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1), inset 0 0 25px rgba(139, 69, 19, 0.05);
+            border-left: var(--decorative-border); /* Neue goldene Seitenlinie */
+            border-right: var(--decorative-border);
+            margin-bottom: 30px; /* Abstand zum Footer */
+        }
+        .blog-post-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed var(--ink-light);
+        }
+        .blog-post-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: var(--red-seal);
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(44, 36, 22, 0.3);
+        }
+        .blog-post-meta {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 0.95rem;
+            color: var(--ink-light);
+            font-style: italic;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+        }
+        .blog-post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .blog-post-meta span::before {
+            content: "•";
+            color: var(--gold);
+        }
+        .blog-post-meta span:first-child::before {
+            content: ""; /* Kein Punkt am Anfang */
+        }
+        .blog-content {
+            display: grid;
+            grid-template-columns: 1fr; /* NUR EINE SPALTE */
+            gap: 40px; /* Größerer Abstand zwischen Spalten */
+        }
+        .blog-text {
+            font-size: 1.1rem;
+            text-align: justify;
+            hyphens: auto;
+        }
+        .blog-text p {
+            margin-bottom: 18px; /* Etwas mehr Zeilenabstand */
+        }
+        /* Initial für den ersten Buchstaben */
+        .blog-text p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 4.5rem; /* Noch größer */
+            float: left;
+            line-height: 0.8;
+            padding-right: 10px;
+            color: var(--red-seal);
+            text-shadow: 1px 1px 1px rgba(44, 36, 22, 0.3);
+            margin-bottom: -5px; /* Korrektur für Zeilenumbruch */
+        }
+        .blog-illustration {
+            margin-bottom: 30px; /* Abstand, wenn es zwischen Text ist */
+            text-align: center; /* Zentriert die Illustration */
+        }
+        .blog-illustration img {
+            max-width: 100%;
+            border: 6px double var(--ink-light);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            filter: sepia(0.4) contrast(1.1) brightness(0.95);
+            transition: all 0.5s ease;
+        }
+        .blog-illustration img:hover {
+            transform: scale(1.02);
+            filter: sepia(0.3) contrast(1.2) brightness(1);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .blog-illustration figcaption {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            font-style: italic;
+            margin-top: 10px;
+            text-align: center;
+        }
+        /* Blockzitate für mehr Abwechslung */
+        blockquote {
+            font-family: 'Cinzel', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--ink-light);
+            border-left: 5px solid var(--red-seal);
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: rgba(201, 162, 39, 0.05);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            line-height: 1.4;
+            position: relative;
+        }
+        blockquote::before {
+            content: "„";
+            font-family: serif;
+            font-size: 5rem;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+            color: rgba(139, 0, 0, 0.1);
+            z-index: 0;
+        }
+        blockquote p {
+            margin-bottom: 0; /* Keine doppelten Absätze */
+        }
+        /* Seitenleiste für Related Posts/Inhaltsverzeichnis */
+        .sidebar {
+            padding: 25px;
+            background: var(--parchment-dark);
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            margin-top: 30px; /* Abstand zum Hauptinhalt */
+        }
+        .sidebar h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.3rem;
+            color: var(--red-seal);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--ink-light);
+            text-align: center;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a {
+            font-family: 'Old Standard TT', serif;
+            color: var(--ink);
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar ul li a:hover {
+            color: var(--red-seal);
+            transform: translateX(5px);
+            text-decoration: underline;
+        }
+        /* Deine bestehenden more-articles, cta, footer, animations, responsive */
+        .more-articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+        .article-card {
+            padding: 25px;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            background: rgba(245, 233, 201, 0.5);
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15);
+            background: rgba(245, 233, 201, 0.7);
+        }
+        .article-card::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            pointer-events: none;
+        }
+        .article-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--ink);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--ink-light);
+        }
+        .article-card p {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        .read-more {
+            display: inline-block;
+            font-family: 'MedievalSharp', cursive;
+            color: var(--red-seal);
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            padding-right: 20px;
+        }
+        .read-more::after {
+            content: "➜";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s ease;
+        }
+        .read-more:hover::after {
+            transform: translate(5px, -50%);
+        }
+        .cta {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, var(--parchment) 40%, var(--parchment-dark));
+            border-top: var(--border-style);
+            position: relative;
+        }
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .cta h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--ink);
+        }
+        .cta p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+        .subscribe-btn {
+            display: inline-block;
+            background: var(--red-seal);
+            color: var(--parchment);
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            text-decoration: none;
+            padding: 12px 35px;
+            border: 3px double var(--gold);
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .subscribe-btn:hover {
+            background: #6d0000;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .subscribe-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            width: 20px;
+            height: 150%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s ease;
+        }
+        .subscribe-btn:hover::before {
+            left: 110%;
+        }
+        footer {
+            padding: 30px 40px;
+            background: var(--ink);
+            color: var(--parchment);
+            text-align: center;
+            position: relative;
+        }
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .footer-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .footer-section {
+            text-align: left;
+            max-width: 250px;
+        }
+        .footer-section h4 {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--gold);
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+        }
+        .footer-links {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: var(--parchment);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+        .copyright {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(201, 162, 39, 0.3);
+            font-size: 0.9rem;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); } 50% { transform: scale(1.03); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) {
+            .article-content, .blog-content {
+                grid-template-columns: 1fr;
+            }
+            .illustration, .blog-illustration {
+                margin-top: 20px;
+            }
+            .more-articles {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            /* Hall of Fame mobile Anpassungen */
+            .hall-of-fame-top3 {
+                flex-direction: column;
+                align-items: center; /* Zentriert die Top 3 untereinander */
+            }
+            .hof-entry.pos-1, .hof-entry.pos-2, .hof-entry.pos-3 {
+                transform: translateY(0); /* Keine vertikale Verschiebung mehr */
+                margin-bottom: 30px; /* Einheitlicher Abstand */
+            }
+            .hof-entry {
+                width: 90%; /* Breite der Schilde auf Mobilgeräten */
+                max-width: 300px;
+            }
+            .rank-item {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            .rank-item .rank-number-small {
+                width: 100%;
+                text-align: left;
+                margin-bottom: 10px;
+            }
+            .rank-item .player-stats {
+                text-align: left;
+            }
+        }
+        @media print {
+            body { background: none; padding: 0; }
+            .newspaper { box-shadow: none; border: none; max-width: 100%; }
+            .nav-links, .subscribe-btn, footer { display: none; }
+        }
+
+        /* --- Hall of Fame Spezifische Styles --- */
+
+        /* Wrapper für die Top 3 Pyramide */
+        .hall-of-fame-top3 {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Elemente an der Basis ausrichten */
+            gap: 20px; /* Abstand zwischen den Schilden */
+            margin-top: 40px;
+            margin-bottom: 60px; /* Mehr Platz zum nachfolgenden Text */
+            flex-wrap: wrap; /* Wichtig für Responsivität */
+        }
+
+        /* Basis-Stil für jeden Hall of Fame Eintrag (Schild) */
+        .hof-entry {
+            background-color: var(--parchment-dark);
+            border: 2px solid var(--ink-light);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            margin-bottom: 20px; /* Abstand für kleinere Schirme */
+            min-width: 220px; /* Mindestbreite, damit sie nicht zu schmal werden */
+            border-radius: 5px; /* Leichte Rundung für den Pergament-Look */
+        }
+
+        .hof-entry:hover {
+            transform: translateY(-5px);
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Spezifische Größen und Positionen für Top 3 */
+        .hof-entry.pos-1 {
+            order: 2; /* An zweiter Stelle in Flexbox für die Mitte */
+            transform: translateY(-30px); /* Höher als die anderen */
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.15);
+        }
+        .hof-entry.pos-2 {
+            order: 1; /* Erste Stelle in Flexbox */
+            transform: translateY(-15px); /* Etwas höher als Platz 3 */
+        }
+        .hof-entry.pos-3 {
+            order: 3; /* Dritte Stelle in Flexbox */
+        }
+
+        /* Schild-Form mit Pseudo-Elementen für die Spitze unten */
+        .hof-entry::before {
+            content: '';
+            position: absolute;
+            bottom: -20px; /* Position der Schildspitze */
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg); /* Drehen für die Spitze */
+            width: 40px; /* Größe der Spitze */
+            height: 40px;
+            background-color: var(--parchment-dark); /* Gleiche Farbe wie Schild */
+            border-right: 2px solid var(--ink-light);
+            border-bottom: 2px solid var(--ink-light);
+            z-index: -1; /* Hinter dem Hauptelement */
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15); /* Schatten für Tiefe */
+        }
+
+        .hof-entry.pos-1::before {
+             box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Styling für die SVG-Illustration - Angepasst vom Schreiber-Layout */
+        .hof-illustration {
+            width: 90px;
+            height: 90px;
+            /* background-color: var(--red-seal); /* Hintergrund des Kreises, falls gewünscht */
+            /* border: 5px double var(--gold); /* Rand um den Kreis, falls gewünscht */
+            border-radius: 50%; /* Kreisform */
+            margin: 0 auto 10px; /* Abstand nach unten */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Für zukünftige SVG/Bilder */
+            position: relative;
+            color: var(--red-seal); /* Farbe, die für SVG-Füllung verwendet wird (currentColor) */
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten für den Kreis */
+        }
+
+        /* Styling für das SVG-Element innerhalb des Kreises */
+        .hof-illustration svg {
+            width: 80%; /* SVG soll nicht den ganzen Kreis ausfüllen */
+            height: 80%;
+            fill: currentColor; /* Verwendet die Textfarbe des Eltern-Elements */
+            stroke: var(--ink-light); /* Ein kleiner Rand um das SVG */
+            stroke-width: 1px;
+            filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.4)); /* dezenter Schatten auf dem SVG */
+            transition: all 0.3s ease;
+        }
+
+        .hof-entry:hover .hof-illustration svg {
+            transform: scale(1.05) rotate(2deg); /* Leichter Effekt beim Hover */
+            stroke-width: 1.5px;
+        }
+
+
+        .hof-entry h2.player-name, .hof-entry h3 { /* h2 für Top 3, h3 für Liste unten */
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--ink);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hof-entry h3 {
+            font-size: 1.3rem; /* Für die unteren Ränge */
+        }
+        .hof-entry .rank-number {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 2.5rem;
+            color: var(--red-seal);
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+        .hof-entry.pos-1 .rank-number { font-size: 3.5rem; }
+        .hof-entry.pos-2 .rank-number { font-size: 3rem; }
+
+        .hof-entry .stats p {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            color: var(--ink-light);
+            line-height: 1.3;
+        }
+        .hof-entry .stats p strong {
+            color: var(--ink);
+        }
+        .hof-entry .wanted-level {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1rem;
+            color: var(--red-seal);
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Liste der weiteren Ränge */
+        .all-ranks-list {
+            margin-top: 40px;
+            border-top: 2px dashed var(--ink-light);
+            padding-top: 30px;
+        }
+        .all-ranks-list h2 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--red-seal);
+            font-size: 2.2rem;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            background-color: var(--parchment-dark);
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+            transition: all 0.2s ease-in-out;
+        }
+        .rank-item:hover {
+            transform: translateX(5px);
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .rank-item .rank-number-small {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--red-seal);
+            min-width: 50px;
+            text-align: center;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+
+        .rank-item .player-name-list { /* Neue Klasse für Spielername in der Liste */
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.3rem;
+            color: var(--ink);
+            flex-grow: 1;
+        }
+
+        .rank-item .player-stats-list { /* Neue Klasse für Statistiken in der Liste */
+            font-size: 0.9rem;
+            color: var(--ink-light);
+            text-align: right;
+            line-height: 1.4;
+            flex-shrink: 0; /* Nicht schrumpfen lassen */
+        }
+        .rank-item .player-stats-list strong {
+             color: var(--ink);
+        }
+    </style>
+</head>
+<body>
+    <div class="newspaper">
+        <header>
+            <div class="header-content">
+                <div class="crest"></div>
+                <h1>Die Königliche Post</h1>
+                <div class="subtitle">Amtliches Nachrichtenblatt des Reiches</div>
+                <div class="date">Anno Domini 1457, den 30. Tag des Monats Juli</div>
+            </div>
+        </header>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Aktuelles</a></li>
+                <li><a href="burg.html">Höfe & Adel</a></li>
+                <li><a href="steuern.html">Handel & Wirtschaft</a></li>
+                <li><a href="ketzerei.html">Kirchen & Glaube</a></li>
+                <li><a href="kultur.html">Kultur & Gelehrsamkeit</a></li>
+              
+            </ul>
+        </nav>
+
+        <main class="blog-post">
+            <div class="blog-post-header">
+                <h2>Die Glorreichsten des Reiches! – Unsere Helden der Königlichen Post Berlin & Cölln</h2>
+                <div class="blog-post-meta">
+                    <span class="update-info">Zuletzt aktualisiert: Heute Morgen durch den Hof-Boten</span>
+                </div>
+            </div>
+            <div class="blog-content">
+                <div class="blog-text">
+                    <p>
+                        In den weiten Landen unseres digitalen Reiches gibt es jene Seelen, deren Taten so groß oder so verwegen sind, dass sie in die Annalen der Geschichte eingehen müssen. Ob durch unermüdlichen Fleiß beim **Fischfang**, kühne **Raubzüge auf feindliche Königreiche** oder gar waghalsige **Plünderungen gegnerischer Kutschen** – ihre Namen sind auf den Lippen des Volkes und nun in Pergament gemeißelt auf dieser Seite der Königlichen Post. Hier präsentieren wir Euch die Ruhmeshalle unserer eigenen Plünderer, Spione und Glücksritter!
+                    </p>
+                    <p>
+                        Die nachfolgende Aufstellung wurde vom geschickten Hof-Boten, unserem neuen Discord-Bot, übermittelt und wird täglich aktualisiert. So bleibt Ihr stets auf dem neuesten Stand, wer die Krone der Berühmtheit trägt und wer demnächst in noch größere Glorie aufsteigen könnte, indem er unseren königlichen Schatz weiter füllt und unsere Gegner schwächt.
+                    </p>
+                </div>
+
+             <div class="hall-of-fame-top3" id="top-3-ranking">
+    </div>
+                
+
+                    
+                </div>
+                <div class="blog-text">
+                    <p>
+                        Die Taten dieser tapferen (und oft gerissenen) Seelen prägen das tägliche Geschehen in unseren Ländereien und den angrenzenden Königreichen. Von den tiefsten Gewässern, wo die größten Fische für unser Volk gefangen werden, bis zu den am besten bewachten Goldtruhen der **Königlichen Bank** und den beladenen Kutschen feindlicher Gebiete – überall hinterlassen sie ihre Spuren. Ein hohes **"Ruhm-Level" (ehemals Wanted Level)** spricht Bände über ihre Effektivität im Dienste der Königlichen Post Berlin & Cölln.
+                    </p>
+                    <blockquote>
+                        <p>"Mögen ihre Legenden erzählt und ihre Namen in Ehren gehalten werden – die Königliche Post ist stolz auf ihre Taten!"</p>
+                    </blockquote>
+                    <p>
+                        Wir sind stolz darauf, Euch diesen exklusiven Einblick in die Hierarchie der Ruhmreichen zu geben. Seid wachsam, denn die Ränge können sich schnell ändern! Wer wird morgen an der Spitze stehen? Wer wagt den nächsten großen Coup für unser Königreich? Die Zeit wird es zeigen.
+                    </p>
+                </div>
+
+                <div class="all-ranks-list" id="all-ranks-container">
+    <h2>Die Liste der tapfersten Recken (Platz 4 - 100)</h2>
+    </div>
+            <div class="sidebar">
+                <h4>Ähnliche Chroniken</h4>
+                <ul>
+                    <li><a href="#">Die Geschichte der Wusler: Von den Anfängen bis heute</a></li>
+                    <li><a href="#">Wirtschaftliche Aspekte in digitalen Reichen: Ein Vergleich</a></li>
+                    <li><a href="#">Community-Stimmen: Was die Siedler wirklich bewegt</a></li>
+                    <li><a href="#">Zukunftsausblick: Innovationen in Online-Welten</a></li>
+                </ul>
+            </div>
+        </main>
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Wir grüßen alle Reisenden!</h2>
+                <p>Schön, Euch auf unserem Blatte willkommen zu heißen! Schaut Euch um, lest die Neuigkeiten und schöpft Wissen. Solltet Ihr Fragen haben oder den Austausch mit Gleichgesinnten suchen, so seid Ihr herzlich eingeladen, unserem digitalen Hof beizutreten – unserer Königlichen Burg.</p>
+                <a href="burg.html" class="subscribe-btn">Betretet die Burg!</a>
+            </div>
+        </section>
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Die Königliche Post</div>
+                <div class="footer-info">
+                    <div class="footer-section">
+                        <h4>Kontakt</h4>
+                        <p>Hofdruckerei des Königs<br>Berlin und Cölln<br>Bote fragen nach <br> Hubert</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="archiv.html">Archiv der Ausgaben</a></li>
+                            <li><a href="berichterstattung.html">Berichterstattung vorschlagen</a></li>
+                            <li><a href="impressum.html">Impressum & Datenschutz</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Über uns</h4>
+                        <ul class="footer-links">
+                            <li><a href="schreiber.html">Unsere Schreiber</a></li>
+                            <li><a href="chronik.html">Geschichte der Post</a></li>
+                            <li><a href="adel.html">Königliches Privileg</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    © Anno Domini 2025 - Die Königliche Post. Alle Rechte vorbehalten. Nachdruck nur mit Genehmigung der königlichen Druckerei.
+                    - Die Zeitung ist rein statisch (html/css)
+                </div>
+            </div>
+        </footer>
+    </div>
+<script>
+    // Dein bestehendes Animations-JavaScript beginnt hier
+    document.addEventListener('DOMContentLoaded', function() {
+        const elements = document.querySelectorAll('header, nav, .hero, .article-card, .cta, footer, .blog-post'); // .blog-post hinzugefügt
+        elements.forEach((el, index) => {
+            setTimeout(() => {
+                el.style.animation = 'fadeIn 0.8s ease-out forwards';
+            }, 150 * index);
+        });
+        // Zufälliges Knackgeräusch für Pergament-Effekt
+        const crackle = () => {
+            const crack = document.createElement('div');
+            crack.style.position = 'fixed';
+            crack.style.top = Math.random() * 100 + 'vh';
+            crack.style.left = Math.random() * 100 + 'vw';
+            crack.style.width = '40px';
+            crack.style.height = '2px';
+            crack.style.background = 'rgba(139, 69, 19, 0.3)';
+            crack.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+            crack.style.pointerEvents = 'none';
+            crack.style.zIndex = '1000';
+            crack.style.opacity = '0';
+            crack.style.transition = 'opacity 3s ease';
+            document.body.appendChild(crack);
+            setTimeout(() => {
+                crack.style.opacity = '1';
+            }, 10);
+            setTimeout(() => {
+                crack.style.opacity = '0';
+            }, 1000);
+            setTimeout(() => {
+                document.body.removeChild(crack);
+            }, 4000);
+        };
+        // Starte den Effekt und wiederhole in zufälligen Abständen
+        setInterval(crackle, 3000 + Math.random() * 7000);
+        crackle();
+        // Dein bestehendes Animations-JavaScript endet hier
+
+
+        // --- NEUES JAVASCRIPT FÜR HALL OF FAME DATENLADUNG BEGINNT HIER ---
+        const hofDataUrl = 'hof_data.json'; // Pfad zu deiner JSON-Datei auf Neocities
+
+        async function loadHallOfFameData() {
+            console.log('Starte das Laden der Hall of Fame Daten...');
+            
+            try {
+                const response = await fetch(hofDataUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Geladene Daten:', data);
+
+                if (data.players && Array.isArray(data.players) && data.players.length > 0) {
+                    console.log('Anzahl Spieler:', data.players.length);
+                    renderTop3(data.players);
+                    renderAllRanks(data.players);
+
+                    // Aktualisiere das "Zuletzt aktualisiert"-Feld
+                    const updateInfoSpan = document.querySelector('.blog-post-meta .update-info');
+                    if (updateInfoSpan && data.last_updated) {
+                        updateInfoSpan.textContent = `Zuletzt aktualisiert: ${data.last_updated}`;
+                    }
+                } else {
+                    console.warn('Nicht genügend Spielerdaten für die Top 3 oder kein "players"-Array vorhanden.');
+                    const top3Container = document.getElementById('top-3-ranking');
+                    if (top3Container) {
+                        top3Container.innerHTML = '<p class="error-message">Nicht genügend Spielerdaten für die Top 3 vorhanden.</p>';
+                    }
+                    
+                    // Versuche verschiedene Container für die Fehlermeldung
+                    const allRanksContainer = findAllRanksContainer();
+                    if (allRanksContainer) {
+                        allRanksContainer.innerHTML = '<p class="error-message">Keine weiteren Spielerdaten verfügbar.</p>';
+                    }
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden der Hall of Fame Daten:', error);
+                const top3Container = document.getElementById('top-3-ranking');
+                if (top3Container) {
+                    top3Container.innerHTML = '<p class="error-message">Daten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p>';
+                }
+                
+                const allRanksContainer = findAllRanksContainer();
+                if (allRanksContainer) {
+                    allRanksContainer.innerHTML = '<p class="error-message">Daten konnten nicht geladen werden.</p>';
+                }
+            }
+        }
+
+        // Hilfsfunktion um den richtigen Container zu finden
+        function findAllRanksContainer() {
+            // Versuche verschiedene mögliche Container-Selektoren
+            let container = document.getElementById('all-ranks-container') ||
+                           document.querySelector('.all-ranks-list') ||
+                           document.querySelector('.all-ranks-container') ||
+                           document.querySelector('[class*="ranks"]') ||
+                           document.querySelector('[id*="ranks"]');
+            
+            console.log('Gefundener Container:', container);
+            return container;
+        }
+
+        function renderTop3(players) {
+            console.log('Rendere Top 3...');
+            const top3Container = document.getElementById('top-3-ranking');
+            if (!top3Container) {
+                console.error('Top 3 Container nicht gefunden!');
+                return;
+            }
+
+            // Leere den Container zuerst
+            top3Container.innerHTML = '';
+
+            // Hole die Top 3 Spieler
+            const topPlayers = players.slice(0, 3);
+            console.log('Top 3 Spieler:', topPlayers);
+
+            // Erstelle die Elemente für die Top 3
+            topPlayers.forEach((player, index) => {
+                const rankPos = index + 1; // 1, 2, 3
+                const hofEntryDiv = document.createElement('div');
+                hofEntryDiv.className = `hof-entry pos-${rankPos}`;
+                hofEntryDiv.id = `hof-entry-${rankPos}`;
+
+                const crown = rankPos === 1 ? '<span class="crown">👑</span>' : '';
+
+                hofEntryDiv.innerHTML = `
+                    <span class="rank-number user-rank">${rankPos}</span>
+                    <div class="hof-illustration">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.3L19.7 7.7L12 11.2L4.3 7.7L12 4.3ZM4 9.1L11 12.6V20.1L4 16.6V9.1ZM13 20.1V12.6L20 9.1V16.6L13 20.1Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h2 class="player-name">${player.name} ${crown}</h2>
+                    <div class="stats">
+                        <p>Fische (Tag): <strong class="user-daily-fish-value">${player.daily_fish.toLocaleString()}</strong></p>
+                        <p>Fische (Gesamt): <strong class="user-summary-fish-value">${player.total_fish.toLocaleString()}</strong></p>
+                        <p>Goldstücke: <strong class="user-summary-gold-value">${player.gold.toLocaleString()}</strong></p>
+                        <p>Bankraube: <strong class="user-bank-robbery-value">${player.bank_robberies.toLocaleString()}</strong></p>
+                        <p>Kutschenraube: <strong class="user-carriage-robbery-value">${player.carriage_robberies.toLocaleString()}</strong></p>
+                        <p class="wanted-level">Ruhm: <strong class="user-wanted-level-value">${player.wanted_level}</strong></p>
+                    </div>
+                `;
+                top3Container.appendChild(hofEntryDiv);
+                console.log(`Top 3 Spieler ${rankPos} hinzugefügt:`, player.name);
+            });
+        }
+
+        function renderAllRanks(players) {
+            console.log('Rendere alle Ränge...');
+            
+            // Finde den richtigen Container
+            const allRanksContainer = findAllRanksContainer();
+            
+            if (!allRanksContainer) {
+                console.error('All Ranks Container nicht gefunden!');
+                console.log('Verfügbare Elemente mit "rank" im Namen:');
+                document.querySelectorAll('[class*="rank"], [id*="rank"]').forEach(el => {
+                    console.log('- Element:', el.tagName, 'Class:', el.className, 'ID:', el.id);
+                });
+                return;
+            }
+
+            console.log('Verwende Container:', allRanksContainer);
+
+            // Leere den Container für alle Ränge zuerst und setze den Titel neu
+            allRanksContainer.innerHTML = '<h2>Die Liste der tapfersten Recken (Platz 4 - 100)</h2>';
+
+            // Hole Spieler ab Rang 4 (Index 3, da Arrays bei 0 beginnen)
+            const remainingPlayers = players.slice(3);
+            console.log('Verbleibende Spieler (ab Rang 4):', remainingPlayers);
+
+            if (remainingPlayers.length === 0) {
+                console.log('Keine verbleibenden Spieler gefunden');
+                allRanksContainer.innerHTML += '<p class="error-message">Keine weiteren Spielerdaten verfügbar.</p>';
+                return;
+            }
+
+            remainingPlayers.forEach((player, index) => {
+                // Berechne den tatsächlichen Rang: Index 0 in remainingPlayers = Rang 4
+                const actualRank = index + 4;
+                console.log(`Füge Spieler ${actualRank} hinzu:`, player.name);
+                
+                const rankItemDiv = document.createElement('div');
+                rankItemDiv.className = 'rank-item';
+
+                rankItemDiv.innerHTML = `
+                    <span class="rank-number-small user-rank">${actualRank}</span>
+                    <span class="player-name-list">${player.name}</span>
+                    <span class="player-stats-list">
+                        Fisch: <strong class="user-summary-fish-value">${player.total_fish.toLocaleString()}</strong> |
+                        Gold: <strong class="user-summary-gold-value">${player.gold.toLocaleString()}</strong> |
+                        Ruhm: <strong class="user-wanted-level-value">${player.wanted_level}</strong>
+                    </span>
+                `;
+                allRanksContainer.appendChild(rankItemDiv);
+            });
+            
+            console.log(`Insgesamt ${remainingPlayers.length} Spieler ab Rang 4 hinzugefügt`);
+        }
+
+        // Lade die Daten, wenn das DOM geladen ist
+        loadHallOfFameData();
+        // --- NEUES JAVASCRIPT FÜR HALL OF FAME DATENLADUNG ENDET HIER ---
+
+    });
+</script>
+         
+</html>
